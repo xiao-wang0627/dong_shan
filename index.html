@@ -1,0 +1,3988 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科创赋能新质生产力·数字海洋标本云展馆</title>
+    <style>
+        /* 使用系统字体，避免外部依赖导致国内加载卡顿 */
+
+        /* ===== 全局重置 ===== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ocean-deep: #060d1a;      /* 深海黑蓝色，更深邃纯净 */
+            --ocean-dark: #0b1d33;      /* 面板和卡片的背景底色 */
+            --ocean-mid: #0f2b4c;       /* 中等色调，辅助渐变 */
+            --ocean-light: #164375;     /* 亮色调，高亮边框 */
+            --ocean-cyan: #00e5ff;      /* 极具现代科技感的亮青色 */
+            --ocean-teal: #00f5d4;      /* 明亮的海洋薄荷绿 */
+            --ocean-foam: #e6fcfc;
+            --text-light: #f0f5fa;
+            --text-muted: #8fa0b5;      /* 浅灰蓝色，提高文字层级 */
+            --glass-bg: rgba(11, 29, 51, 0.55);
+            --glass-border: rgba(0, 229, 255, 0.12);
+            --accent-glow: rgba(0, 229, 255, 0.25);
+            --card-bg: rgba(15, 43, 76, 0.45);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--ocean-deep);
+            color: var(--text-light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== 滚动条美化 ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--ocean-deep);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--ocean-light);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--ocean-cyan);
+        }
+
+        /* ===== 海洋粒子背景 ===== */
+        .ocean-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 245, 212, 0.4) 0%, rgba(0, 229, 255, 0) 70%);
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.25);
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* ===== 导航栏 ===== */
+        .navbar {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 80px);
+            max-width: 1280px;
+            z-index: 1000;
+            padding: 0 36px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(6, 13, 26, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .navbar.scrolled {
+            top: 0;
+            width: 100%;
+            max-width: 100%;
+            border-radius: 0;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            background: rgba(6, 13, 26, 0.9);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            height: 60px;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-light);
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        .navbar-logo .logo-svg {
+            color: var(--ocean-cyan);
+            filter: drop-shadow(0 0 6px var(--accent-glow));
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .navbar-logo:hover .logo-svg {
+            transform: rotate(180deg);
+        }
+
+        .navbar-logo span {
+            background: linear-gradient(135deg, var(--text-light) 60%, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .navbar-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--ocean-cyan), var(--ocean-teal));
+            transition: width 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border-radius: 2px;
+        }
+
+        .navbar-links a:hover {
+            color: var(--ocean-cyan);
+        }
+
+        .navbar-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-toggle {
+            display: none;
+            font-size: 24px;
+            color: var(--text-light);
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        /* ===== Hero 区域 ===== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px 80px;
+            z-index: 1;
+        }
+
+        .hero-bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(6, 13, 26, 0.6) 0%, rgba(6, 13, 26, 0.95) 100%), url('assets/hero_bg.jpg') no-repeat center center / cover;
+            z-index: -1;
+        }
+
+        /* 海浪动画 */
+        .wave-container {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            overflow: hidden;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='%23060d1a' fill-opacity='0.6' d='M0,80 C240,110 480,50 720,80 C960,110 1200,50 1440,80 L1440,120 L0,120 Z'/%3E%3C/svg%3E") repeat-x;
+            animation: waveMove 12s linear infinite;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .wave:nth-child(2) {
+            bottom: 4px;
+            opacity: 0.8;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='%23060d1a' fill-opacity='0.8' d='M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,120 L0,120 Z'/%3E%3C/svg%3E") repeat-x;
+            animation: waveMove 16s linear infinite reverse;
+        }
+
+        .wave:nth-child(3) {
+            bottom: -1px;
+            opacity: 1;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='%23060d1a' fill-opacity='1.0' d='M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,120 L0,120 Z'/%3E%3C/svg%3E") repeat-x;
+            animation: waveMove 20s linear infinite;
+        }
+
+        @keyframes waveMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 24px;
+            background: linear-gradient(90deg, rgba(0, 229, 255, 0.12), rgba(0, 245, 212, 0.05));
+            border: 1px solid rgba(0, 229, 255, 0.35);
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ocean-cyan);
+            letter-spacing: 2px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 20px rgba(0, 229, 255, 0.05);
+            animation: fadeInDown 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .hero-team {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 28px;
+            background: linear-gradient(135deg, rgba(0, 245, 212, 0.15), rgba(0, 229, 255, 0.08));
+            border: 1px solid rgba(0, 245, 212, 0.4);
+            border-radius: 50px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 24px rgba(0, 245, 212, 0.1);
+            animation: fadeInUp 1s cubic-bezier(0.165, 0.84, 0.44, 1) 0.4s both;
+        }
+
+        .hero-team-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--ocean-cyan), var(--ocean-teal));
+            color: var(--ocean-deep);
+            font-size: 14px;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .hero-team-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ocean-foam);
+            letter-spacing: 1px;
+        }
+
+        .hero-team-text .team-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            margin-right: 6px;
+        }
+
+        .hero-title {
+            font-size: clamp(32px, 5.5vw, 60px);
+            font-weight: 900;
+            line-height: 1.25;
+            margin-bottom: 24px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 40px rgba(0, 229, 255, 0.15);
+            animation: fadeInUp 1s cubic-bezier(0.165, 0.84, 0.44, 1) 0.2s both;
+        }
+
+        .hero-title .highlight {
+            background: linear-gradient(135deg, var(--ocean-cyan), var(--ocean-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-title .divider {
+            display: block;
+            font-size: 0.55em;
+            color: var(--text-light);
+            font-weight: 400;
+            margin-top: 14px;
+            opacity: 0.95;
+            letter-spacing: 4px;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(15px, 2.2vw, 18px);
+            color: var(--text-muted);
+            max-width: 680px;
+            margin: 0 auto 48px;
+            line-height: 1.8;
+            animation: fadeInUp 1s cubic-bezier(0.165, 0.84, 0.44, 1) 0.4s both;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 1s cubic-bezier(0.165, 0.84, 0.44, 1) 0.6s both;
+        }
+
+        .hero-stat {
+            text-align: center;
+            background: rgba(15, 43, 76, 0.2);
+            padding: 12px 28px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 229, 255, 0.05);
+            backdrop-filter: blur(5px);
+        }
+
+        .hero-stat .num {
+            font-size: 40px;
+            font-weight: 800;
+            color: var(--ocean-cyan);
+            line-height: 1.1;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, var(--ocean-cyan), var(--ocean-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-stat .label {
+            font-size: 13px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-muted);
+            font-size: 12px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .mouse-icon {
+            width: 20px;
+            height: 32px;
+            border: 2px solid var(--text-muted);
+            border-radius: 12px;
+            position: relative;
+            opacity: 0.7;
+        }
+
+        .mouse-icon .wheel {
+            width: 2px;
+            height: 6px;
+            background: var(--ocean-cyan);
+            border-radius: 1px;
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scrollWheel 2s infinite;
+        }
+
+        @keyframes scrollWheel {
+            0% {
+                top: 6px;
+                opacity: 1;
+            }
+            50% {
+                top: 14px;
+                opacity: 0;
+            }
+            100% {
+                top: 6px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== 通用 Section ===== */
+        .section {
+            position: relative;
+            z-index: 3;
+            padding: 100px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 72px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 4px 16px;
+            background: rgba(0, 229, 255, 0.08);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--ocean-cyan);
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 900;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+
+        .section-title .accent {
+            background: linear-gradient(135deg, var(--ocean-cyan), var(--ocean-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ===== 展馆简介 ===== */
+        .intro-section {
+            background: linear-gradient(180deg, var(--ocean-deep), rgba(15, 43, 76, 0.15));
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 展馆简介 - 海面光透射装饰 */
+        .intro-banner {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            margin-bottom: 48px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: linear-gradient(180deg, #0a2a4a 0%, #061528 100%);
+        }
+        .intro-banner svg { width: 100%; height: 100%; display: block; }
+        .light-ray {
+            animation: rayShimmer 6s ease-in-out infinite alternate;
+        }
+        .light-ray:nth-child(2) { animation-delay: -1.5s; }
+        .light-ray:nth-child(3) { animation-delay: -3s; }
+        .light-ray:nth-child(4) { animation-delay: -4.5s; }
+        @keyframes rayShimmer {
+            0% { opacity: 0.15; transform: translateX(0) scaleY(1); }
+            100% { opacity: 0.5; transform: translateX(10px) scaleY(1.05); }
+        }
+        .wave-line { animation: waveMove 8s ease-in-out infinite alternate; }
+        @keyframes waveMove {
+            0% { transform: translateX(-20px); }
+            100% { transform: translateX(20px); }
+        }
+        .intro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+        }
+
+        .intro-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 44px 32px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+        .intro-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 229, 255, 0.4);
+            box-shadow: 0 15px 45px rgba(0, 229, 255, 0.15), inset 0 0 15px rgba(0, 229, 255, 0.05);
+            background: rgba(11, 29, 51, 0.75);
+        }
+
+        .intro-card .icon-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.12), rgba(0, 245, 212, 0.05));
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: var(--ocean-cyan);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+        }
+
+        .intro-card:hover .icon-wrapper {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(0, 245, 212, 0.1));
+            border-color: rgba(0, 229, 255, 0.4);
+            box-shadow: 0 8px 24px rgba(0, 229, 255, 0.25);
+            transform: scale(1.05);
+        }
+
+        .intro-card .card-icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        .intro-card h3 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .intro-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ===== 卡片配图区 ===== */
+        .card-visual {
+            width: 100%;
+            height: 130px;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+            background: linear-gradient(135deg, #0a2a4a 0%, #061528 100%);
+            border: 1px solid rgba(0, 229, 255, 0.08);
+        }
+        .card-visual svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .intro-card { padding: 24px 24px 32px; }
+        .science-card { padding: 24px 28px 32px; }
+        .tech-item { padding: 22px 20px 28px; }
+        .intro-card .icon-wrapper { width: 48px; height: 48px; margin-bottom: 16px; }
+        .intro-card .card-icon { width: 22px; height: 22px; }
+        .science-card .num-badge { width: 36px; height: 36px; font-size: 13px; margin-bottom: 16px; }
+        .tech-item .tech-icon { width: 48px; height: 48px; margin-bottom: 14px; }
+        .tech-svg { width: 22px; height: 22px; }
+
+        /* ===== 标本展示区 ===== */
+        .specimen-filters {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+        }
+
+        .filter-btn {
+            padding: 10px 26px;
+            background: rgba(15, 43, 76, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            backdrop-filter: blur(10px);
+            letter-spacing: 0.5px;
+        }
+
+        .filter-btn:hover {
+            color: var(--text-light);
+            border-color: var(--ocean-cyan);
+            background: rgba(15, 43, 76, 0.7);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--ocean-cyan), var(--ocean-teal));
+            color: var(--ocean-deep);
+            border-color: transparent;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(0, 229, 255, 0.25);
+        }
+
+        .specimen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 28px;
+        }
+
+        .specimen-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            cursor: pointer;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+        .specimen-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--ocean-cyan);
+            box-shadow: 0 15px 45px rgba(0, 229, 255, 0.15);
+            background: rgba(11, 29, 51, 0.75);
+        }
+
+        .specimen-image {
+            width: 100%;
+            height: 230px;
+            background: linear-gradient(135deg, var(--ocean-dark), var(--ocean-mid));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .specimen-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            animation: imgFadeIn 0.5s ease;
+        }
+
+        @keyframes imgFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .specimen-card:hover .specimen-image img {
+            transform: scale(1.08);
+        }
+
+        .specimen-image .placeholder-icon {
+            color: var(--ocean-cyan);
+            opacity: 0.5;
+            filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.3));
+        }
+
+        .specimen-image .category-tag {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            padding: 4px 14px;
+            background: rgba(6, 13, 26, 0.75);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--ocean-cyan);
+            backdrop-filter: blur(5px);
+        }
+
+        .specimen-image.dual {
+            flex-direction: row;
+            gap: 2px;
+        }
+
+        .specimen-image.dual img,
+        .specimen-image.dual .img-wrap {
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .specimen-card:hover .specimen-image.dual img {
+            transform: scale(1.05);
+        }
+
+        .specimen-body {
+            padding: 24px;
+        }
+
+        .specimen-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .specimen-latin {
+            font-size: 13px;
+            color: var(--ocean-teal);
+            font-style: italic;
+            margin-bottom: 14px;
+            font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .specimen-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.65;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .specimen-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .specimen-meta .depth {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .specimen-meta .view-btn {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--ocean-cyan);
+            text-decoration: none;
+            transition: color 0.3s, transform 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .specimen-meta .view-btn:hover {
+            color: var(--ocean-teal);
+            transform: translateX(3px);
+        }
+
+        /* 空状态提示 */
+        .specimen-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 40px;
+            background: rgba(11, 29, 51, 0.25);
+            border: 2px dashed rgba(0, 229, 255, 0.15);
+            border-radius: 24px;
+            color: var(--text-muted);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            max-width: 600px;
+            margin: 40px auto;
+        }
+
+        .specimen-empty:hover {
+            border-color: rgba(0, 229, 255, 0.4);
+            box-shadow: 0 12px 30px rgba(0, 229, 255, 0.08);
+        }
+
+        .specimen-empty h3 {
+            font-size: 20px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .specimen-empty p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* ===== 数字科普区 ===== */
+        .science-section {
+            background: linear-gradient(180deg, rgba(15, 43, 76, 0.15), rgba(6, 13, 26, 0.4));
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 数字科普 - 海洋深度带可视化 */
+        .depth-viz {
+            margin-bottom: 48px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+        }
+        .depth-viz-bar {
+            display: flex;
+            height: 70px;
+        }
+        .depth-viz-zone {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: flex 0.4s ease;
+            cursor: default;
+        }
+        .depth-viz-zone:hover { flex: 1.3; }
+        .depth-viz-zone .zone-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2px;
+        }
+        .depth-viz-zone .zone-depth {
+            font-size: 11px;
+            color: rgba(255,255,255,0.55);
+        }
+        .depth-viz-zone + .depth-viz-zone {
+            border-left: 1px solid rgba(255,255,255,0.08);
+        }
+        .depth-viz-labels {
+            display: flex;
+            padding: 14px 0 16px;
+            background: rgba(6,13,26,0.4);
+        }
+        .depth-viz-label-item {
+            flex: 1;
+            text-align: center;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .depth-viz-label-item .dl-title {
+            color: var(--ocean-cyan);
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .science-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+        }
+
+        .science-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px 36px;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+        .science-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--ocean-cyan), var(--ocean-teal));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .science-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--ocean-cyan);
+            background: rgba(11, 29, 51, 0.75);
+            box-shadow: 0 15px 40px rgba(0, 229, 255, 0.1);
+        }
+
+        .science-card:hover::before {
+            opacity: 1;
+        }
+
+        .science-card .num-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 245, 212, 0.05));
+            border: 1px solid rgba(0, 229, 255, 0.20);
+            border-radius: 50%;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ocean-cyan);
+            margin-bottom: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s ease;
+        }
+
+        .science-card:hover .num-badge {
+            border-color: var(--ocean-cyan);
+            color: var(--ocean-cyan);
+            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.25);
+        }
+
+        .science-card h3 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .science-card p {
+            font-size: 14.5px;
+            color: var(--text-muted);
+            line-height: 1.75;
+        }
+
+        /* ===== 科创赋能区 ===== */
+        .tech-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 科创赋能 - 数字网格装饰 */
+        .tech-grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .tech-section .section-header,
+        .tech-section .tech-showcase {
+            position: relative;
+            z-index: 1;
+        }
+        .tech-pulse {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+            pointer-events: none;
+            animation: techPulse 4s ease-in-out infinite;
+        }
+        .tech-pulse:nth-child(2) { top: 15%; left: 10%; width: 200px; height: 200px; animation-delay: 0s; }
+        .tech-pulse:nth-child(3) { top: 50%; right: 8%; width: 250px; height: 250px; animation-delay: -1.5s; }
+        .tech-pulse:nth-child(4) { bottom: 10%; left: 30%; width: 180px; height: 180px; animation-delay: -3s; }
+        @keyframes techPulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        .tech-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+        }
+
+        .tech-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 36px 28px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+        .tech-item:hover {
+            transform: translateY(-6px) scale(1.01);
+            border-color: var(--ocean-teal);
+            box-shadow: 0 15px 40px rgba(0, 245, 212, 0.15);
+            background: rgba(11, 29, 51, 0.75);
+        }
+
+        .tech-item .tech-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.12), rgba(0, 245, 212, 0.05));
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ocean-cyan);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+        }
+
+        .tech-item:hover .tech-icon {
+            transform: rotate(8deg);
+            color: var(--ocean-teal);
+            border-color: var(--ocean-teal);
+            box-shadow: 0 8px 20px rgba(0, 245, 212, 0.25);
+        }
+
+        .tech-svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .tech-item h4 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .tech-item p {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ===== 页脚 ===== */
+        .footer {
+            position: relative;
+            z-index: 3;
+            background: var(--ocean-deep);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 60px 40px 30px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 1px;
+        }
+
+        .footer-logo .logo-svg {
+            color: var(--ocean-cyan);
+            filter: drop-shadow(0 0 6px var(--accent-glow));
+        }
+
+        .footer-text {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13.5px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--ocean-cyan);
+        }
+
+        .footer-copy {
+            font-size: 12px;
+            color: rgba(143, 160, 181, 0.3);
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== 模态框 ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(6, 13, 26, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.35s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--ocean-dark) 40%, var(--ocean-mid));
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            box-shadow: 0 25px 60px rgba(0, 229, 255, 0.15);
+            border-radius: 24px;
+            max-width: 720px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 44px;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            font-size: 16px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 320px;
+            background: linear-gradient(135deg, var(--ocean-dark), var(--ocean-mid));
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 28px;
+            border: 1px solid rgba(0, 229, 255, 0.1);
+        }
+
+        .modal-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-image.dual {
+            flex-direction: row;
+            gap: 2px;
+        }
+
+        .modal-image.dual img,
+        .modal-image.dual .img-wrap {
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-image .placeholder-icon {
+            color: var(--ocean-cyan);
+            opacity: 0.4;
+            filter: drop-shadow(0 0 15px var(--accent-glow));
+        }
+
+        .modal-title {
+            font-size: 28px;
+            font-weight: 850;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-latin {
+            font-size: 14.5px;
+            color: var(--ocean-teal);
+            font-style: italic;
+            margin-bottom: 24px;
+            font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+        }
+
+        .modal-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .modal-info-item {
+            background: rgba(0, 229, 255, 0.04);
+            border: 1px solid rgba(0, 229, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px 18px;
+        }
+
+        .modal-info-item .label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .modal-info-item .value {
+            font-size: 15px;
+            color: var(--ocean-cyan);
+            font-weight: 600;
+        }
+
+        .modal-desc {
+            font-size: 14.5px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 992px) {
+            .navbar {
+                width: calc(100% - 40px);
+                top: 20px;
+                padding: 0 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                width: 100%;
+                top: 0;
+                border-radius: 0;
+                border-top: none;
+                border-left: none;
+                border-right: none;
+                padding: 0 20px;
+                height: 60px;
+                background: rgba(6, 13, 26, 0.95);
+            }
+
+            .navbar-links {
+                display: none;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                flex-direction: column;
+                background: rgba(6, 13, 26, 0.98);
+                padding: 30px 24px;
+                gap: 20px;
+                backdrop-filter: blur(20px);
+                border-bottom: 1px solid var(--glass-border);
+            }
+
+            .navbar-links.open {
+                display: flex;
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            .section {
+                padding: 70px 20px;
+            }
+
+            .hero-stats {
+                gap: 20px;
+            }
+
+            .hero-stat {
+                padding: 10px 20px;
+            }
+
+            .footer {
+                padding: 40px 20px 24px;
+            }
+        }
+
+        /* ===== 3D hover tilt & glare ===== */
+        .specimen-card {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out, border-color 0.4s, box-shadow 0.4s, background 0.4s;
+        }
+        .card-glare {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            transition: background 0.15s ease-out;
+            border-radius: 20px;
+        }
+        
+        /* ===== Card action overlay (Star / Compare) ===== */
+        .card-actions-overlay {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            display: flex;
+            gap: 8px;
+            z-index: 20;
+        }
+        .card-action-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(6, 13, 26, 0.75);
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            padding: 0;
+        }
+        .card-action-btn:hover {
+            color: var(--ocean-cyan);
+            border-color: var(--ocean-cyan);
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+        }
+        .card-action-btn.fav-btn.active {
+            color: #ffc000;
+            border-color: #ffc000;
+            box-shadow: 0 0 10px rgba(255, 192, 0, 0.3);
+        }
+        .card-action-btn.comp-btn.active {
+            color: var(--ocean-teal);
+            border-color: var(--ocean-teal);
+            box-shadow: 0 0 10px rgba(0, 245, 212, 0.3);
+        }
+        
+        /* ===== Protection status tag styles ===== */
+        .status-tag {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .status-cr {
+            background: linear-gradient(135deg, #ff3860 0%, #ff8a00 100%);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(255, 56, 96, 0.4);
+            animation: statusPulse 2s infinite alternate;
+        }
+        .status-en {
+            background: linear-gradient(135deg, #ff7e00 0%, #ffc000 100%);
+            color: #fff;
+            box-shadow: 0 0 8px rgba(255, 126, 0, 0.35);
+        }
+        .status-vu {
+            background: linear-gradient(135deg, #ffc000 0%, #ffe600 100%);
+            color: #1a1a1a;
+            box-shadow: 0 0 6px rgba(255, 192, 0, 0.3);
+        }
+        .status-lc {
+            background: linear-gradient(135deg, #48c774 0%, #1f9e54 100%);
+            color: #fff;
+        }
+        .status-ne {
+            background: linear-gradient(135deg, #7a8a9e 0%, #58697e 100%);
+            color: #fff;
+        }
+        @keyframes statusPulse {
+            0% { transform: scale(1); box-shadow: 0 0 5px rgba(255, 56, 96, 0.4); }
+            100% { transform: scale(1.03); box-shadow: 0 0 15px rgba(255, 56, 96, 0.7); }
+        }
+        
+        /* ===== Filter control panel ===== */
+        .filter-control-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            width: 100%;
+        }
+        .search-box {
+            position: relative;
+            flex: 1.5;
+            min-width: 260px;
+        }
+        .search-box input {
+            width: 100%;
+            height: 46px;
+            padding: 0 16px 0 46px;
+            background: rgba(15, 43, 76, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            color: var(--text-light);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--ocean-cyan);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+            background: rgba(15, 43, 76, 0.6);
+        }
+        .search-box .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: color 0.3s;
+        }
+        .search-box input:focus + .search-icon {
+            color: var(--ocean-cyan);
+        }
+        .filter-dropdowns {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .select-wrapper {
+            position: relative;
+        }
+        .select-wrapper select {
+            appearance: none;
+            -webkit-appearance: none;
+            height: 46px;
+            padding: 0 40px 0 20px;
+            background: rgba(15, 43, 76, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            color: var(--text-muted);
+            font-size: 13.5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .select-wrapper select:focus,
+        .select-wrapper select:hover {
+            color: var(--text-light);
+            border-color: var(--ocean-cyan);
+            background: rgba(15, 43, 76, 0.6);
+        }
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 9px;
+            color: var(--text-muted);
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+        .select-wrapper:hover::after {
+            color: var(--ocean-cyan);
+        }
+        
+        /* ===== Ecology Depth Zone ===== */
+        .ecology-section {
+            background: linear-gradient(180deg, var(--ocean-deep), rgba(11, 29, 51, 0.2));
+        }
+        .ecology-container {
+            display: flex;
+            gap: 40px;
+            flex-direction: row;
+            align-items: stretch;
+            margin-top: 20px;
+        }
+        .depth-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            justify-content: space-between;
+        }
+        .depth-zone-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+        .depth-zone-item .zone-depth-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+        .depth-zone-item .zone-name {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        .depth-zone-item .zone-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: none;
+        }
+        .depth-zone-item.active {
+            transform: translateX(8px);
+        }
+        .depth-zone-item.active .zone-desc {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .depth-zone-item[data-zone="epipelagic"] {
+            border-left: 5px solid var(--ocean-cyan);
+        }
+        .depth-zone-item[data-zone="epipelagic"].active {
+            background: linear-gradient(135deg, rgba(0, 180, 219, 0.25) 0%, rgba(15, 43, 76, 0.6) 100%);
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.25);
+            border-color: var(--ocean-cyan);
+        }
+        .depth-zone-item[data-zone="epipelagic"] .zone-name { color: var(--ocean-cyan); }
+        
+        .depth-zone-item[data-zone="mesopelagic"] {
+            border-left: 5px solid var(--ocean-teal);
+        }
+        .depth-zone-item[data-zone="mesopelagic"].active {
+            background: linear-gradient(135deg, rgba(15, 43, 76, 0.7) 0%, rgba(6, 13, 26, 0.5) 100%);
+            box-shadow: 0 0 25px rgba(0, 245, 212, 0.25);
+            border-color: var(--ocean-teal);
+        }
+        .depth-zone-item[data-zone="mesopelagic"] .zone-name { color: var(--ocean-teal); }
+        
+        .depth-zone-item[data-zone="bathypelagic"] {
+            border-left: 5px solid #a855f7;
+        }
+        .depth-zone-item[data-zone="bathypelagic"].active {
+            background: linear-gradient(135deg, rgba(20, 10, 40, 0.5) 0%, rgba(6, 13, 26, 0.8) 100%);
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.3);
+            border-color: #a855f7;
+        }
+        .depth-zone-item[data-zone="bathypelagic"] .zone-name { color: #c084fc; }
+        
+        .depth-specimens-container {
+            flex: 1.5;
+            background: rgba(11, 29, 51, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 24px;
+            overflow-y: auto;
+            max-height: 520px;
+            backdrop-filter: blur(10px);
+        }
+        .depth-specimens-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .eco-specimen-card {
+            background: rgba(15, 43, 76, 0.35);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .eco-specimen-card:hover {
+            background: rgba(15, 43, 76, 0.65);
+            border-color: var(--ocean-cyan);
+            transform: translateX(6px);
+            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.12);
+        }
+        .eco-img-wrapper {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: var(--ocean-dark);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .eco-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .eco-info {
+            flex: 1;
+        }
+        .eco-info h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 2px;
+        }
+        .eco-depth-tag {
+            font-size: 12px;
+            color: var(--ocean-teal);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .eco-arrow {
+            color: var(--text-muted);
+            transition: color 0.3s, transform 0.3s;
+            margin-left: auto;
+        }
+        .eco-specimen-card:hover .eco-arrow {
+            color: var(--ocean-cyan);
+            transform: translateX(3px);
+        }
+        
+        /* ===== Compare Tray (Floating Bar) ===== */
+        .compare-tray {
+            position: fixed;
+            bottom: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(11, 29, 51, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--ocean-cyan);
+            border-bottom: none;
+            box-shadow: 0 -10px 40px rgba(0, 229, 255, 0.15);
+            border-radius: 20px 20px 0 0;
+            z-index: 1500;
+            width: calc(100% - 60px);
+            max-width: 680px;
+            padding: 16px 24px;
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+        }
+        .compare-tray.active {
+            bottom: 0;
+        }
+        .compare-tray-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .compare-tray-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-light);
+            letter-spacing: 0.5px;
+        }
+        .compare-slots {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+            justify-content: center;
+            min-width: 280px;
+        }
+        .compare-slot {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(15, 43, 76, 0.5);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 12px;
+            padding: 6px 12px;
+            flex: 1;
+            height: 44px;
+            position: relative;
+        }
+        .compare-slot-empty {
+            border-style: dashed;
+            color: var(--text-muted);
+            justify-content: center;
+            font-size: 12px;
+        }
+        .compare-slot img {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+        .compare-slot span {
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            font-weight: 600;
+        }
+        .compare-slot-remove {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 13px;
+            padding: 2px 4px;
+            transition: color 0.3s;
+        }
+        .compare-slot-remove:hover {
+            color: #ff3860;
+        }
+        .compare-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .compare-start-btn {
+            background: linear-gradient(135deg, var(--ocean-cyan), var(--ocean-teal));
+            color: var(--ocean-deep);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .compare-start-btn:disabled {
+            background: rgba(143, 160, 181, 0.2);
+            color: rgba(143, 160, 181, 0.4);
+            cursor: not-allowed;
+        }
+        .compare-clear-btn {
+            background: none;
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .compare-clear-btn:hover {
+            color: var(--text-light);
+            border-color: var(--text-muted);
+        }
+        
+        /* ===== Compare Modal Table ===== */
+        .compare-modal-content {
+            max-width: 860px !important;
+        }
+        .compare-table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            background: rgba(15, 43, 76, 0.15);
+        }
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            color: var(--text-light);
+        }
+        .compare-table th, .compare-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .compare-table th {
+            background: rgba(15, 43, 76, 0.7);
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--ocean-cyan);
+        }
+        .compare-table td {
+            background: rgba(11, 29, 51, 0.4);
+            font-size: 13.5px;
+            line-height: 1.6;
+        }
+        .compare-table tr:hover td {
+            background: rgba(15, 43, 76, 0.2);
+        }
+        .compare-table .compare-label {
+            font-weight: 700;
+            color: var(--text-muted);
+            background: rgba(15, 43, 76, 0.4);
+            width: 120px;
+            letter-spacing: 0.5px;
+        }
+        .compare-table img {
+            max-width: 160px;
+            max-height: 120px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+        }
+        
+        /* ===== Floating Favorites Button & Drawer ===== */
+        .floating-fav-badge {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: rgba(11, 29, 51, 0.85);
+            border: 1px solid var(--ocean-cyan);
+            color: #ffc000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(0, 229, 255, 0.2);
+            z-index: 1700;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .floating-fav-badge:hover {
+            transform: scale(1.08) rotate(10deg);
+            box-shadow: 0 8px 35px rgba(0, 229, 255, 0.35);
+        }
+        .floating-fav-badge .badge-count {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            background: #ff3860;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .favorites-sidebar {
+            position: fixed;
+            top: 0;
+            right: -380px;
+            width: 360px;
+            height: 100vh;
+            background: rgba(6, 13, 26, 0.95);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-left: 1px solid rgba(0, 229, 255, 0.15);
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
+            z-index: 1800;
+            transition: right 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+        }
+        .favorites-sidebar.active {
+            right: 0;
+        }
+        .fav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 16px;
+        }
+        .fav-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-light);
+            letter-spacing: 0.5px;
+        }
+        .fav-close {
+            font-size: 18px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+            background: none;
+            border: none;
+        }
+        .fav-close:hover {
+            color: var(--ocean-cyan);
+        }
+        .fav-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .fav-item {
+            background: rgba(15, 43, 76, 0.35);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .fav-item:hover {
+            background: rgba(15, 43, 76, 0.55);
+            border-color: var(--ocean-cyan);
+        }
+        .fav-img {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--ocean-dark);
+        }
+        .fav-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .fav-name {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 2px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .fav-name:hover {
+            color: var(--ocean-cyan);
+        }
+        .fav-category {
+            font-size: 11.5px;
+            color: var(--ocean-teal);
+        }
+        .fav-remove-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 15px;
+            padding: 6px;
+            transition: color 0.3s;
+        }
+        .fav-remove-btn:hover {
+            color: #ff3860;
+        }
+        .fav-empty-msg {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13.5px;
+            margin-top: 60px;
+        }
+        
+        /* ===== Voice Guide Component ===== */
+        .voice-guide-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px;
+            background: rgba(0, 229, 255, 0.08);
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            border-radius: 30px;
+            color: var(--ocean-cyan);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 18px;
+            vertical-align: middle;
+        }
+        .voice-guide-btn:hover {
+            background: rgba(0, 229, 255, 0.16);
+            border-color: var(--ocean-cyan);
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+        }
+        .voice-guide-btn.playing {
+            background: rgba(0, 245, 212, 0.12);
+            border-color: var(--ocean-teal);
+            color: var(--ocean-teal);
+            box-shadow: 0 0 12px rgba(0, 245, 212, 0.25);
+        }
+        .voice-wave {
+            display: none;
+            align-items: flex-end;
+            gap: 3px;
+            width: 22px;
+            height: 12px;
+        }
+        .voice-guide-btn.playing .voice-wave {
+            display: flex;
+        }
+        .wave-bar {
+            width: 3px;
+            height: 4px;
+            background-color: var(--ocean-teal);
+            border-radius: 1px;
+            animation: voiceBounce 1s ease-in-out infinite;
+        }
+        .wave-bar:nth-child(2) {
+            animation-delay: 0.15s;
+            height: 8px;
+        }
+        .wave-bar:nth-child(3) {
+            animation-delay: 0.3s;
+            height: 6px;
+        }
+        .wave-bar:nth-child(4) {
+            animation-delay: 0.45s;
+            height: 10px;
+        }
+        @keyframes voiceBounce {
+            0%, 100% { height: 4px; }
+            50% { height: 12px; }
+        }
+        
+        /* ===== Responsive enhancements for upgraded components ===== */
+        @media (max-width: 992px) {
+            .ecology-container {
+                flex-direction: column;
+                gap: 28px;
+            }
+            .depth-bar {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .depth-zone-item {
+                flex: 1;
+                min-width: 200px;
+            }
+            .depth-zone-item.active {
+                transform: translateY(-4px);
+            }
+            .depth-specimens-container {
+                max-height: 400px;
+            }
+        }
+        @media (max-width: 600px) {
+            .filter-control-panel {
+                padding: 16px;
+                border-radius: 18px;
+            }
+            .search-box {
+                flex: 1 1 100%;
+            }
+            .filter-dropdowns {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .select-wrapper {
+                flex: 1;
+            }
+            .select-wrapper select {
+                width: 100%;
+            }
+            .depth-bar {
+                flex-direction: column;
+            }
+            .favorites-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+            .compare-tray {
+                width: 100%;
+                border-radius: 12px 12px 0 0;
+                padding: 12px 16px;
+            }
+            .compare-slots {
+                min-width: 100%;
+            }
+            /* 新增视觉装饰响应式 */
+            .intro-banner { height: 120px; }
+            .depth-viz-zone .zone-name { font-size: 11px; }
+            .depth-viz-zone .zone-depth { font-size: 9px; }
+            .depth-viz-label-item { font-size: 10px; }
+            .depth-viz-label-item .dl-title { font-size: 10.5px; }
+            .tech-pulse { display: none; }
+            .card-visual { height: 100px; }
+            .intro-card { padding: 20px 18px 28px; }
+            .science-card { padding: 20px 22px 28px; }
+            .tech-item { padding: 18px 16px 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 海洋粒子背景 -->
+    <div class="ocean-particles" id="particles"></div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" style="cursor: pointer;">
+            <svg class="logo-svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M16.2 7.8l-2 5.6-5.6 2 2-5.6 5.6-2z"></path>
+                <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
+            </svg>
+            <span>数字海洋标本云展馆</span>
+        </div>
+        <ul class="navbar-links" id="navLinks">
+            <li><a href="#hero">首页</a></li>
+            <li><a href="#intro">展馆简介</a></li>
+            <li><a href="#ecology">生态深度</a></li>
+            <li><a href="#specimens">标本展示</a></li>
+            <li><a href="#science">数字科普</a></li>
+            <li><a href="#tech">科创赋能</a></li>
+        </ul>
+        <button class="nav-toggle" id="navToggle">☰</button>
+    </nav>
+
+    <!-- Hero 区域 -->
+    <section class="hero" id="hero">
+        <div class="hero-bg-gradient"></div>
+        <div class="wave-container">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+
+        <div class="hero-badge">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+            </svg>
+            SCIENCE × OCEAN × DIGITAL
+        </div>
+        <h1 class="hero-title">
+            科创赋能<span class="highlight">新质生产力</span>
+            <span class="divider">数字海洋标本云展馆</span>
+        </h1>
+        <p class="hero-subtitle">
+            以数字化手段保存海洋标本影像，构建交互式线上展馆与科普平台，
+            让每一份标本都成为连接科学与公众的桥梁
+        </p>
+
+        <div class="hero-team">
+            <div class="hero-team-icon">E</div>
+            <div class="hero-team-text">
+                <span class="team-label">研学团队</span>E路逐梦
+            </div>
+        </div>
+
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="num" id="statSpecimens">0</div>
+                <div class="label">数字标本</div>
+            </div>
+            <div class="hero-stat">
+                <div class="num" id="statCategories">3</div>
+                <div class="label">标本门类</div>
+            </div>
+            <div class="hero-stat">
+                <div class="num">100%</div>
+                <div class="label">在线交互</div>
+            </div>
+            <div class="hero-stat">
+                <div class="num">24h</div>
+                <div class="label">云端访问</div>
+            </div>
+        </div>
+
+        <div class="hero-scroll" onclick="document.getElementById('intro').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
+            <span class="mouse-icon">
+                <span class="wheel"></span>
+            </span>
+            <span class="scroll-text" style="font-size: 11px; font-weight: 500; letter-spacing: 2px;">向下探索</span>
+        </div>
+    </section>
+
+    <!-- 展馆简介 -->
+    <section class="section intro-section" id="intro">
+        <div class="section-header">
+            <span class="section-tag">ABOUT</span>
+            <h2 class="section-title">展馆<span class="accent">简介</span></h2>
+            <p class="section-desc">融合数字科技与海洋科学，打造新型海洋科普生态</p>
+        </div>
+
+        <!-- 海面光透射装饰横幅 -->
+        <div class="intro-banner">
+            <svg viewBox="0 0 1200 180" preserveAspectRatio="xMidYMid slice">
+                <!-- 海面波纹 -->
+                <path class="wave-line" d="M0,30 Q150,15 300,30 T600,30 T900,30 T1200,30 L1200,0 L0,0 Z" fill="rgba(0,229,255,0.06)"/>
+                <path class="wave-line" d="M0,45 Q200,30 400,45 T800,45 T1200,45 L1200,0 L0,0 Z" fill="rgba(0,229,255,0.04)" style="animation-delay:-2s"/>
+                <!-- 光透射射线 -->
+                <polygon class="light-ray" points="200,0 180,180 280,180 300,0" fill="rgba(0,229,255,0.08)"/>
+                <polygon class="light-ray" points="500,0 470,180 590,180 620,0" fill="rgba(0,245,212,0.06)"/>
+                <polygon class="light-ray" points="820,0 790,180 920,180 950,0" fill="rgba(0,229,255,0.07)"/>
+                <polygon class="light-ray" points="1050,0 1020,180 1130,180 1160,0" fill="rgba(0,245,212,0.05)"/>
+                <!-- 粒子气泡 -->
+                <circle cx="150" cy="120" r="3" fill="rgba(0,229,255,0.3)"/>
+                <circle cx="380" cy="90" r="2" fill="rgba(0,245,212,0.4)"/>
+                <circle cx="680" cy="140" r="4" fill="rgba(0,229,255,0.2)"/>
+                <circle cx="900" cy="100" r="2" fill="rgba(0,245,212,0.3)"/>
+                <circle cx="1080" cy="130" r="3" fill="rgba(0,229,255,0.25)"/>
+                <circle cx="550" cy="60" r="2" fill="rgba(0,245,212,0.35)"/>
+                <!-- 海底波纹 -->
+                <path d="M0,170 Q200,155 400,170 T800,170 T1200,170 L1200,180 L0,180 Z" fill="rgba(0,229,255,0.05)"/>
+            </svg>
+        </div>
+
+        <div class="intro-grid">
+            <div class="intro-card">
+                <div class="card-visual">
+                    <svg viewBox="0 0 280 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="iv1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="280" height="130" fill="url(#iv1)"/>
+                        <circle cx="140" cy="62" r="30" fill="none" stroke="#00e5ff" stroke-width="2" opacity="0.5"/>
+                        <circle cx="140" cy="62" r="20" fill="none" stroke="#00f5d4" stroke-width="1.5" opacity="0.4"/>
+                        <circle cx="140" cy="62" r="10" fill="#00e5ff" opacity="0.12"/>
+                        <circle cx="140" cy="62" r="5" fill="#00e5ff" opacity="0.35"/>
+                        <path d="M105 62 Q98 52 103 44 Q112 39 120 44" fill="none" stroke="#00f5d4" stroke-width="2" opacity="0.6" stroke-linecap="round"/>
+                        <rect x="170" y="48" width="7" height="7" fill="#00e5ff" opacity="0.35"/>
+                        <rect x="180" y="44" width="5" height="5" fill="#00f5d4" opacity="0.28"/>
+                        <rect x="174" y="60" width="6" height="6" fill="#00e5ff" opacity="0.3"/>
+                        <rect x="185" y="55" width="5" height="5" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="172" y="72" width="6" height="6" fill="#00e5ff" opacity="0.25"/>
+                        <rect x="183" y="74" width="7" height="7" fill="#00f5d4" opacity="0.2"/>
+                        <line x1="100" y1="62" x2="165" y2="62" stroke="#00e5ff" stroke-width="1" opacity="0.25" stroke-dasharray="4,3"/>
+                        <circle cx="45" cy="35" r="3" fill="#00e5ff" opacity="0.18"/>
+                        <circle cx="235" cy="95" r="2" fill="#00f5d4" opacity="0.15"/>
+                        <circle cx="55" cy="105" r="2.5" fill="#00e5ff" opacity="0.12"/>
+                        <circle cx="220" cy="30" r="2" fill="#00f5d4" opacity="0.15"/>
+                    </svg>
+                </div>
+                <div class="icon-wrapper">
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                </div>
+                <h3>标本数字化</h3>
+                <p>对海洋标本进行拍摄采集与数字化存储，将实体标本转化为可在线浏览的数字资源，永久保存影像记录</p>
+            </div>
+            <div class="intro-card">
+                <div class="card-visual">
+                    <svg viewBox="0 0 280 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="iv2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="280" height="130" fill="url(#iv2)"/>
+                        <ellipse cx="140" cy="35" rx="42" ry="18" fill="#00e5ff" opacity="0.12"/>
+                        <ellipse cx="140" cy="32" rx="34" ry="14" fill="#00e5ff" opacity="0.1"/>
+                        <ellipse cx="140" cy="30" rx="26" ry="10" fill="#00f5d4" opacity="0.08"/>
+                        <line x1="140" y1="50" x2="110" y2="85" stroke="#00e5ff" stroke-width="1.5" opacity="0.3" stroke-dasharray="3,3"/>
+                        <line x1="140" y1="50" x2="170" y2="85" stroke="#00e5ff" stroke-width="1.5" opacity="0.3" stroke-dasharray="3,3"/>
+                        <line x1="140" y1="50" x2="140" y2="90" stroke="#00f5d4" stroke-width="1.5" opacity="0.3" stroke-dasharray="3,3"/>
+                        <rect x="88" y="85" width="44" height="30" rx="4" fill="rgba(0,229,255,0.08)" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+                        <rect x="92" y="90" width="36" height="3" rx="1" fill="#00e5ff" opacity="0.3"/>
+                        <rect x="92" y="96" width="28" height="2" rx="1" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="92" y="101" width="32" height="2" rx="1" fill="#00e5ff" opacity="0.2"/>
+                        <rect x="118" y="85" width="44" height="30" rx="4" fill="rgba(0,229,255,0.08)" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+                        <rect x="122" y="90" width="36" height="3" rx="1" fill="#00e5ff" opacity="0.3"/>
+                        <rect x="122" y="96" width="28" height="2" rx="1" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="122" y="101" width="32" height="2" rx="1" fill="#00e5ff" opacity="0.2"/>
+                        <rect x="148" y="85" width="44" height="30" rx="4" fill="rgba(0,229,255,0.08)" stroke="#00f5d4" stroke-width="1" opacity="0.4"/>
+                        <rect x="152" y="90" width="36" height="3" rx="1" fill="#00e5ff" opacity="0.3"/>
+                        <rect x="152" y="96" width="28" height="2" rx="1" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="152" y="101" width="32" height="2" rx="1" fill="#00e5ff" opacity="0.2"/>
+                        <circle cx="50" cy="25" r="2" fill="#00e5ff" opacity="0.2"/>
+                        <circle cx="230" cy="110" r="2.5" fill="#00f5d4" opacity="0.15"/>
+                    </svg>
+                </div>
+                <div class="icon-wrapper">
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+                        <path d="M12 12v6M9 15l3 3 3-3"></path>
+                    </svg>
+                </div>
+                <h3>云端展馆</h3>
+                <p>突破物理空间限制，构建可随时随地访问的线上展馆，无需安装软件，打开网页即可浏览全部标本</p>
+            </div>
+            <div class="intro-card">
+                <div class="card-visual">
+                    <svg viewBox="0 0 280 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="iv3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="280" height="130" fill="url(#iv3)"/>
+                        <path d="M110 95 L110 55 Q110 48 117 48 L163 48 Q170 48 170 55 L170 95 Z" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="1.2" opacity="0.5"/>
+                        <line x1="140" y1="48" x2="140" y2="95" stroke="#00e5ff" stroke-width="1" opacity="0.25"/>
+                        <line x1="117" y1="62" x2="133" y2="62" stroke="#00f5d4" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+                        <line x1="117" y1="70" x2="130" y2="70" stroke="#00f5d4" stroke-width="1.5" opacity="0.35" stroke-linecap="round"/>
+                        <line x1="117" y1="78" x2="133" y2="78" stroke="#00f5d4" stroke-width="1.5" opacity="0.3" stroke-linecap="round"/>
+                        <line x1="147" y1="62" x2="163" y2="62" stroke="#00f5d4" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+                        <line x1="147" y1="70" x2="160" y2="70" stroke="#00f5d4" stroke-width="1.5" opacity="0.35" stroke-linecap="round"/>
+                        <line x1="147" y1="78" x2="163" y2="78" stroke="#00f5d4" stroke-width="1.5" opacity="0.3" stroke-linecap="round"/>
+                        <path d="M170 60 Q185 55 195 62 Q200 70 195 78 Q185 83 175 78" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+                        <circle cx="193" cy="68" r="1.5" fill="#00e5ff" opacity="0.5"/>
+                        <path d="M100 75 Q90 70 82 76 Q77 82 82 88 Q90 92 97 87" fill="none" stroke="#00f5d4" stroke-width="1.5" opacity="0.35" stroke-linecap="round"/>
+                        <circle cx="86" cy="80" r="1.2" fill="#00f5d4" opacity="0.4"/>
+                        <path d="M100 35 L140 20 L180 35" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.2" stroke-dasharray="2,3"/>
+                        <circle cx="45" cy="100" r="2" fill="#00e5ff" opacity="0.15"/>
+                        <circle cx="230" cy="40" r="2.5" fill="#00f5d4" opacity="0.15"/>
+                    </svg>
+                </div>
+                <div class="icon-wrapper">
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                </div>
+                <h3>科普教育</h3>
+                <p>以生动交互的方式呈现海洋生物知识，融合标本展示与科普内容，激发公众对海洋生态保护的关注</p>
+            </div>
+            <div class="intro-card">
+                <div class="card-visual">
+                    <svg viewBox="0 0 280 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="iv4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="280" height="130" fill="url(#iv4)"/>
+                        <path d="M120 25 L160 25 L155 35 L125 35 Z" fill="rgba(0,229,255,0.1)" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+                        <line x1="140" y1="35" x2="140" y2="42" stroke="#00e5ff" stroke-width="1.5" opacity="0.3"/>
+                        <rect x="60" y="45" width="50" height="35" rx="5" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="1" opacity="0.35"/>
+                        <circle cx="75" cy="58" r="6" fill="#00e5ff" opacity="0.15"/>
+                        <rect x="85" y="54" width="18" height="2" rx="1" fill="#00f5d4" opacity="0.3"/>
+                        <rect x="85" y="60" width="14" height="2" rx="1" fill="#00e5ff" opacity="0.25"/>
+                        <rect x="85" y="66" width="16" height="2" rx="1" fill="#00f5d4" opacity="0.2"/>
+                        <rect x="115" y="45" width="50" height="35" rx="5" fill="rgba(0,229,255,0.06)" stroke="#00f5d4" stroke-width="1" opacity="0.35"/>
+                        <circle cx="130" cy="58" r="6" fill="#00f5d4" opacity="0.15"/>
+                        <rect x="140" y="54" width="18" height="2" rx="1" fill="#00e5ff" opacity="0.3"/>
+                        <rect x="140" y="60" width="14" height="2" rx="1" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="140" y="66" width="16" height="2" rx="1" fill="#00e5ff" opacity="0.2"/>
+                        <rect x="170" y="45" width="50" height="35" rx="5" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="1" opacity="0.35"/>
+                        <circle cx="185" cy="58" r="6" fill="#00e5ff" opacity="0.15"/>
+                        <rect x="195" y="54" width="18" height="2" rx="1" fill="#00f5d4" opacity="0.3"/>
+                        <rect x="195" y="60" width="14" height="2" rx="1" fill="#00e5ff" opacity="0.25"/>
+                        <rect x="195" y="66" width="16" height="2" rx="1" fill="#00f5d4" opacity="0.2"/>
+                        <path d="M215 72 L225 78 L220 82 L210 76 Z" fill="#00f5d4" opacity="0.4"/>
+                        <line x1="210" y1="76" x2="206" y2="72" stroke="#00f5d4" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+                        <circle cx="50" cy="105" r="2" fill="#00e5ff" opacity="0.15"/>
+                        <circle cx="240" cy="100" r="2.5" fill="#00f5d4" opacity="0.15"/>
+                    </svg>
+                </div>
+                <div class="icon-wrapper">
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"></path>
+                    </svg>
+                </div>
+                <h3>交互浏览</h3>
+                <p>提供分类筛选与详情查看功能，点击标本卡片即可查看学名、分布海域、栖息深度等详细信息</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 深海垂直生态带 -->
+    <section class="section ecology-section" id="ecology">
+        <div class="section-header">
+            <span class="section-tag">ECOSYSTEM</span>
+            <h2 class="section-title">深海<span class="accent">垂直生态带</span></h2>
+            <p class="section-desc">探秘不同水深层级的海洋生命分布，从暖阳表层到黑暗海底</p>
+        </div>
+
+        <div class="ecology-container">
+            <!-- Left: Vertical Depth Bar -->
+            <div class="depth-bar">
+                <div class="depth-zone-item active" data-zone="epipelagic">
+                    <div class="zone-depth-text">0 - 200m</div>
+                    <div class="zone-name">光照带 (Epipelagic)</div>
+                    <div class="zone-desc">阳光充足，光合作用旺盛，浮游生物繁茂，集中了绝大多数的海洋生物。</div>
+                </div>
+                <div class="depth-zone-item" data-zone="mesopelagic">
+                    <div class="zone-depth-text">200m - 1000m</div>
+                    <div class="zone-name">弱光带 (Mesopelagic)</div>
+                    <div class="zone-desc">仅有微弱余光，植物无法生存，生物多具大眼、发光器或进行垂直日夜洄游。</div>
+                </div>
+                <div class="depth-zone-item" data-zone="bathypelagic">
+                    <div class="zone-depth-text">1000m+</div>
+                    <div class="zone-name">无光带 (Bathypelagic)</div>
+                    <div class="zone-desc">永恒的黑暗与高压，温度接近冰点，生存着特殊的深海骨骼与多孔生物。</div>
+                </div>
+            </div>
+
+            <!-- Right: Specimen list for selected depth -->
+            <div class="depth-specimens-container">
+                <div class="depth-specimens-grid" id="depthSpecimenGrid">
+                    <!-- 动态填充 -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 标本展示区 -->
+    <section class="section" id="specimens">
+        <div class="section-header">
+            <span class="section-tag">SPECIMENS</span>
+            <h2 class="section-title">海洋<span class="accent">标本展示</span></h2>
+            <p class="section-desc">汇聚多元海洋生物数字标本，探索深蓝世界的生命奥秘</p>
+        </div>
+
+        <!-- 智能检索与多维筛选面板 -->
+        <div class="filter-control-panel">
+            <!-- 搜索框 -->
+            <div class="search-box">
+                <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="specimenSearch" placeholder="输入名称、学名或区域检索标本..." oninput="handleFilterChange()">
+            </div>
+            
+            <!-- 分类筛选 -->
+            <div class="specimen-filters" id="filterBar" style="margin-bottom: 0;">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="invertebrate">无脊椎动物</button>
+                <button class="filter-btn" data-filter="fish">鱼类</button>
+                <button class="filter-btn" data-filter="reptile">爬行动物</button>
+            </div>
+            
+            <!-- 排序与状态选择 -->
+            <div class="filter-dropdowns">
+                <div class="select-wrapper">
+                    <select id="sortSelect" onchange="handleFilterChange()">
+                        <option value="default">默认排序</option>
+                        <option value="sizeDesc">体型大小 (大 → 小)</option>
+                        <option value="sizeAsc">体型大小 (小 → 大)</option>
+                        <option value="depthDesc">栖息深度 (深 → 浅)</option>
+                        <option value="depthAsc">栖息深度 (浅 → 深)</option>
+                    </select>
+                </div>
+                <div class="select-wrapper">
+                    <select id="statusSelect" onchange="handleFilterChange()">
+                        <option value="all">所有状态</option>
+                        <option value="threatened">受胁物种 (易危/濒危/极危)</option>
+                        <option value="leastConcern">无危 (Least Concern)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 标本卡片网格 -->
+        <div class="specimen-grid" id="specimenGrid">
+            <!-- 占位提示 -->
+            <div class="specimen-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="width: 56px; height: 56px; color: var(--ocean-cyan); opacity: 0.7; margin-bottom: 20px;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 8v4M12 16h.01"></path>
+                </svg>
+                <h3>标本数据即将上线</h3>
+                <p style="margin-top: 6px;">请提供标本名称和类型，展馆将为您呈现精彩内容</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 数字科普区 -->
+    <section class="section science-section" id="science">
+        <div class="section-header">
+            <span class="section-tag">SCIENCE</span>
+            <h2 class="section-title">数字<span class="accent">科普</span></h2>
+            <p class="section-desc">以数字化手段普及海洋科学知识，让科学触手可及</p>
+        </div>
+
+        <!-- 海洋深度带可视化 -->
+        <div class="depth-viz">
+            <div class="depth-viz-bar">
+                <div class="depth-viz-zone" style="background:linear-gradient(180deg,#1a5c8a,#1a5c8a)">
+                    <span class="zone-name">透光层</span>
+                    <span class="zone-depth">0 - 200m</span>
+                </div>
+                <div class="depth-viz-zone" style="background:linear-gradient(180deg,#0f4a72,#0a3a5c)">
+                    <span class="zone-name">弱光层</span>
+                    <span class="zone-depth">200 - 1000m</span>
+                </div>
+                <div class="depth-viz-zone" style="background:linear-gradient(180deg,#0a2e4a,#061f35)">
+                    <span class="zone-name">无光层</span>
+                    <span class="zone-depth">1000 - 4000m</span>
+                </div>
+                <div class="depth-viz-zone" style="background:linear-gradient(180deg,#04132a,#020a1a)">
+                    <span class="zone-name">深渊层</span>
+                    <span class="zone-depth">4000m+</span>
+                </div>
+            </div>
+            <div class="depth-viz-labels">
+                <div class="depth-viz-label-item"><span class="dl-title">阳光充足</span><br>光合生物带</div>
+                <div class="depth-viz-label-item"><span class="dl-title">微弱蓝光</span><br>过渡生物带</div>
+                <div class="depth-viz-label-item"><span class="dl-title">完全黑暗</span><br>深水生物带</div>
+                <div class="depth-viz-label-item"><span class="dl-title">高压低温</span><br>深渊生物带</div>
+            </div>
+        </div>
+
+        <div class="science-grid">
+            <div class="science-card">
+                <div class="card-visual">
+                    <svg viewBox="0 0 300 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="sv1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="300" height="130" fill="url(#sv1)"/>
+                        <path d="M55 70 Q45 62 48 52 Q55 45 65 48 Q72 42 80 48 Q88 45 92 54 Q96 62 88 70 Q92 78 85 84 Q75 88 68 82 Q60 86 52 80 Q48 74 55 70Z" fill="rgba(0,229,255,0.08)" stroke="#00e5ff" stroke-width="1.2" opacity="0.5"/>
+                        <circle cx="68" cy="65" r="1.5" fill="#00e5ff" opacity="0.5"/>
+                        <path d="M88 66 L96 62 M88 66 L96 70" stroke="#00e5ff" stroke-width="1" opacity="0.4" stroke-linecap="round"/>
+                        <path d="M200 55 Q210 48 225 50 Q235 55 232 65 Q228 72 220 70 Q212 72 205 66 Q198 62 200 55Z" fill="rgba(0,245,212,0.06)" stroke="#00f5d4" stroke-width="1.2" opacity="0.45"/>
+                        <circle cx="220" cy="58" r="1.2" fill="#00f5d4" opacity="0.5"/>
+                        <path d="M198 58 L190 55 M198 62 L190 65" stroke="#00f5d4" stroke-width="1" opacity="0.35" stroke-linecap="round"/>
+                        <ellipse cx="140" cy="85" rx="15" ry="8" fill="rgba(0,229,255,0.05)" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+                        <path d="M155 85 Q165 80 170 85 Q165 90 155 85" fill="rgba(0,229,255,0.08)" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+                        <circle cx="165" cy="83" r="1" fill="#00e5ff" opacity="0.5"/>
+                        <path d="M120 30 Q130 25 140 28 Q150 25 160 30 Q155 38 145 36 Q135 38 125 34 Q118 34 120 30Z" fill="rgba(0,245,212,0.05)" stroke="#00f5d4" stroke-width="1" opacity="0.35"/>
+                        <path d="M140 36 L140 42 M130 34 L128 40 M150 34 L152 40" stroke="#00f5d4" stroke-width="0.8" opacity="0.3"/>
+                        <line x1="70" y1="55" x2="125" y2="35" stroke="#00e5ff" stroke-width="0.5" opacity="0.15" stroke-dasharray="2,3"/>
+                        <line x1="88" y1="70" x2="140" y2="80" stroke="#00e5ff" stroke-width="0.5" opacity="0.15" stroke-dasharray="2,3"/>
+                        <line x1="155" y1="85" x2="200" y2="65" stroke="#00f5d4" stroke-width="0.5" opacity="0.15" stroke-dasharray="2,3"/>
+                        <line x1="160" y1="30" x2="220" y2="55" stroke="#00f5d4" stroke-width="0.5" opacity="0.15" stroke-dasharray="2,3"/>
+                        <circle cx="40" cy="105" r="2" fill="#00e5ff" opacity="0.15"/>
+                        <circle cx="260" cy="105" r="2.5" fill="#00f5d4" opacity="0.15"/>
+                        <circle cx="250" cy="25" r="2" fill="#00e5ff" opacity="0.12"/>
+                    </svg>
+                </div>
+                <span class="num-badge">01</span>
+                <h3>海洋生物多样性</h3>
+                <p>海洋是地球上最大的生物栖息地，已知海洋生物超过23万种。从微小的浮游生物到庞大的蓝鲸，构成了复杂而精妙的海洋生态系统。</p>
+            </div>
+            <div class="science-card">
+                <div class="card-visual">
+                    <svg viewBox="0 0 300 130" preserveAspectRatio="xMidYMid slice">
+                        <defs>
+                            <linearGradient id="sv2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#020a1a"/></linearGradient>
+                            <linearGradient id="sv2beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(0,229,255,0.2)"/><stop offset="100%" stop-color="rgba(0,229,255,0)"/></linearGradient>
+                        </defs>
+                        <rect width="300" height="130" fill="url(#sv2)"/>
+                        <polygon points="120,0 180,0 200,130 100,130" fill="url(#sv2beam)" opacity="0.6"/>
+                        <ellipse cx="150" cy="20" rx="50" ry="6" fill="rgba(0,229,255,0.08)"/>
+                        <path d="M135 45 L165 45 L162 50 L138 50 Z" fill="rgba(0,229,255,0.12)" stroke="#00e5ff" stroke-width="1" opacity="0.5"/>
+                        <rect x="140" y="50" width="20" height="14" rx="2" fill="rgba(0,229,255,0.08)" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+                        <circle cx="150" cy="57" r="3" fill="#00e5ff" opacity="0.3"/>
+                        <line x1="150" y1="64" x2="150" y2="72" stroke="#00e5ff" stroke-width="1.5" opacity="0.4"/>
+                        <line x1="143" y1="72" x2="157" y2="72" stroke="#00e5ff" stroke-width="1.5" opacity="0.4"/>
+                        <line x1="145" y1="76" x2="155" y2="76" stroke="#00e5ff" stroke-width="1" opacity="0.3"/>
+                        <path d="M148 78 L148 85 M152 78 L152 85" stroke="#00e5ff" stroke-width="1" opacity="0.3"/>
+                        <circle cx="148" cy="88" r="2" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.4"/>
+                        <circle cx="152" cy="90" r="1.5" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.3"/>
+                        <path d="M60 90 Q70 85 78 90 Q82 95 76 98 Q68 100 62 95 Q56 93 60 90Z" fill="rgba(0,245,212,0.06)" stroke="#00f5d4" stroke-width="1" opacity="0.35"/>
+                        <circle cx="70" cy="92" r="1" fill="#00f5d4" opacity="0.4"/>
+                        <path d="M225 95 Q235 88 245 94 Q250 100 243 104 Q233 106 228 100 Q222 97 225 95Z" fill="rgba(0,229,255,0.05)" stroke="#00e5ff" stroke-width="1" opacity="0.3"/>
+                        <circle cx="238" cy="97" r="1" fill="#00e5ff" opacity="0.35"/>
+                        <circle cx="50" cy="30" r="1.5" fill="#00e5ff" opacity="0.2"/>
+                        <circle cx="250" cy="35" r="1.5" fill="#00f5d4" opacity="0.15"/>
+                        <circle cx="280" cy="80" r="1" fill="#00e5ff" opacity="0.15"/>
+                        <line x1="0" y1="115" x2="300" y2="115" stroke="rgba(0,229,255,0.06)" stroke-width="1"/>
+                    </svg>
+                </div>
+                <span class="num-badge">02</span>
+                <h3>深海探索前沿</h3>
+                <p>深海区域覆盖地球表面约60%，仍有大量未知生物等待发现。每一次深海探索都可能带来全新的科学发现，拓展人类对生命的认知边界。</p>
+            </div>
+            <div class="science-card">
+                <div class="card-visual">
+                    <svg viewBox="0 0 300 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="sv3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="300" height="130" fill="url(#sv3)"/>
+                        <line x1="150" y1="25" x2="150" y2="50" stroke="#00e5ff" stroke-width="2" opacity="0.4"/>
+                        <line x1="150" y1="25" x2="145" y2="20" stroke="#00e5ff" stroke-width="2" opacity="0.4" stroke-linecap="round"/>
+                        <line x1="150" y1="25" x2="155" y2="20" stroke="#00e5ff" stroke-width="2" opacity="0.4" stroke-linecap="round"/>
+                        <path d="M130 50 L170 50 L165 58 L135 58 Z" fill="rgba(0,229,255,0.1)" stroke="#00e5ff" stroke-width="1.2" opacity="0.5"/>
+                        <rect x="138" y="58" width="24" height="6" rx="1" fill="rgba(0,229,255,0.08)" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+                        <ellipse cx="150" cy="75" rx="22" ry="15" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity="0.3"/>
+                        <ellipse cx="150" cy="75" rx="14" ry="10" fill="rgba(0,229,255,0.06)" stroke="#00f5d4" stroke-width="1" opacity="0.35"/>
+                        <ellipse cx="150" cy="75" rx="7" ry="5" fill="#00e5ff" opacity="0.12"/>
+                        <circle cx="150" cy="75" r="2.5" fill="#00e5ff" opacity="0.4"/>
+                        <path d="M128 75 Q120 70 118 62" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.25" stroke-linecap="round"/>
+                        <path d="M172 75 Q180 70 182 62" fill="none" stroke="#00f5d4" stroke-width="1" opacity="0.25" stroke-linecap="round"/>
+                        <g opacity="0.35">
+                            <path d="M220 50 Q230 45 240 50 L240 52 Q230 50 220 52 Z" fill="none" stroke="#00f5d4" stroke-width="1.2"/>
+                            <path d="M220 52 Q230 57 240 52" fill="none" stroke="#00f5d4" stroke-width="1.2"/>
+                            <line x1="225" y1="50" x2="225" y2="57" stroke="#00f5d4" stroke-width="0.8"/>
+                            <line x1="230" y1="50" x2="230" y2="58" stroke="#00f5d4" stroke-width="0.8"/>
+                            <line x1="235" y1="50" x2="235" y2="57" stroke="#00f5d4" stroke-width="0.8"/>
+                            <path d="M220 57 Q230 62 240 57 L240 59 Q230 57 220 59 Z" fill="none" stroke="#00e5ff" stroke-width="1.2"/>
+                            <path d="M220 59 Q230 64 240 59" fill="none" stroke="#00e5ff" stroke-width="1.2"/>
+                            <line x1="225" y1="59" x2="225" y2="64" stroke="#00e5ff" stroke-width="0.8"/>
+                            <line x1="230" y1="59" x2="230" y2="65" stroke="#00e5ff" stroke-width="0.8"/>
+                            <line x1="235" y1="59" x2="235" y2="64" stroke="#00e5ff" stroke-width="0.8"/>
+                        </g>
+                        <rect x="60" y="85" width="6" height="6" rx="1" fill="#00e5ff" opacity="0.25"/>
+                        <rect x="70" y="82" width="6" height="6" rx="1" fill="#00f5d4" opacity="0.2"/>
+                        <rect x="80" y="88" width="6" height="6" rx="1" fill="#00e5ff" opacity="0.22"/>
+                        <rect x="65" y="95" width="6" height="6" rx="1" fill="#00f5d4" opacity="0.18"/>
+                        <rect x="78" y="100" width="6" height="6" rx="1" fill="#00e5ff" opacity="0.2"/>
+                        <line x1="66" y1="88" x2="70" y2="85" stroke="#00e5ff" stroke-width="0.5" opacity="0.2"/>
+                        <line x1="76" y1="88" x2="80" y2="91" stroke="#00e5ff" stroke-width="0.5" opacity="0.2"/>
+                        <line x1="70" y1="91" x2="68" y2="95" stroke="#00e5ff" stroke-width="0.5" opacity="0.2"/>
+                        <circle cx="45" cy="35" r="2" fill="#00e5ff" opacity="0.15"/>
+                        <circle cx="265" cy="95" r="2" fill="#00f5d4" opacity="0.15"/>
+                    </svg>
+                </div>
+                <span class="num-badge">03</span>
+                <h3>标本的科学价值</h3>
+                <p>海洋标本是生物分类学、生态学、进化生物学研究的重要基础。数字化标本更可实现远程研究、永久保存与全球共享。</p>
+            </div>
+            <div class="science-card">
+                <div class="card-visual">
+                    <svg viewBox="0 0 300 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="sv4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="300" height="130" fill="url(#sv4)"/>
+                        <path d="M0 105 Q50 95 100 105 T200 105 T300 105 L300 130 L0 130 Z" fill="rgba(0,229,255,0.06)"/>
+                        <path d="M0 110 Q50 100 100 110 T200 110 T300 110 L300 130 L0 130 Z" fill="rgba(0,245,212,0.04)"/>
+                        <path d="M100 90 Q95 80 100 72 Q108 66 116 70 Q120 62 128 66 Q134 72 130 80 Q134 88 126 92 Q116 95 108 90 Q102 93 100 90Z" fill="rgba(0,229,255,0.08)" stroke="#00e5ff" stroke-width="1" opacity="0.45"/>
+                        <line x1="120" y1="80" x2="115" y2="76" stroke="#00e5ff" stroke-width="0.8" opacity="0.3"/>
+                        <line x1="122" y1="84" x2="118" y2="88" stroke="#00e5ff" stroke-width="0.8" opacity="0.3"/>
+                        <line x1="128" y1="78" x2="133" y2="75" stroke="#00e5ff" stroke-width="0.8" opacity="0.3"/>
+                        <line x1="128" y1="85" x2="132" y2="88" stroke="#00e5ff" stroke-width="0.8" opacity="0.3"/>
+                        <path d="M170 88 Q165 78 170 70 Q180 65 188 70 Q195 65 200 72 Q205 80 198 86 Q190 92 182 88 Q175 91 170 88Z" fill="rgba(0,245,212,0.06)" stroke="#00f5d4" stroke-width="1" opacity="0.4"/>
+                        <line x1="185" y1="78" x2="180" y2="74" stroke="#00f5d4" stroke-width="0.8" opacity="0.3"/>
+                        <line x1="190" y1="82" x2="195" y2="78" stroke="#00f5d4" stroke-width="0.8" opacity="0.3"/>
+                        <path d="M140 50 Q148 44 155 48 Q162 44 168 50 Q164 56 156 54 Q148 56 144 52 Q138 52 140 50Z" fill="rgba(0,229,255,0.05)" stroke="#00e5ff" stroke-width="1" opacity="0.35"/>
+                        <path d="M154 54 L154 60 M148 52 L146 58 M160 52 L162 58" stroke="#00e5ff" stroke-width="0.8" opacity="0.25"/>
+                        <path d="M150 25 Q160 18 170 25 Q165 30 158 28 Q152 30 150 25Z" fill="none" stroke="#00f5d4" stroke-width="1.5" opacity="0.4"/>
+                        <path d="M158 28 L158 34" stroke="#00f5d4" stroke-width="1.5" opacity="0.35" stroke-linecap="round"/>
+                        <path d="M130 30 Q140 24 148 30" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.25"/>
+                        <path d="M172 30 Q180 24 188 30" fill="none" stroke="#00f5d4" stroke-width="1" opacity="0.25"/>
+                        <circle cx="50" cy="50" r="2" fill="#00e5ff" opacity="0.15"/>
+                        <circle cx="255" cy="55" r="2.5" fill="#00f5d4" opacity="0.15"/>
+                        <circle cx="270" cy="90" r="2" fill="#00e5ff" opacity="0.12"/>
+                    </svg>
+                </div>
+                <span class="num-badge">04</span>
+                <h3>海洋生态保护</h3>
+                <p>气候变化、海洋污染和过度捕捞正威胁着海洋生态系统。通过科普教育提升公众海洋保护意识，是守护蓝色家园的关键一步。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 科创赋能区 -->
+    <section class="section tech-section" id="tech">
+        <div class="tech-grid-bg"></div>
+        <div class="tech-pulse"></div>
+        <div class="tech-pulse"></div>
+        <div class="tech-pulse"></div>
+        <div class="section-header">
+            <span class="section-tag">TECHNOLOGY</span>
+            <h2 class="section-title">科创<span class="accent">赋能</span></h2>
+            <p class="section-desc">新质生产力驱动海洋标本展示与科普教育创新升级</p>
+        </div>
+
+        <div class="tech-showcase">
+            <div class="tech-item">
+                <div class="card-visual">
+                    <svg viewBox="0 0 260 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="tv1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="260" height="130" fill="url(#tv1)"/>
+                        <line x1="100" y1="35" x2="100" y2="60" stroke="#00e5ff" stroke-width="2" opacity="0.4"/>
+                        <line x1="160" y1="35" x2="160" y2="60" stroke="#00e5ff" stroke-width="2" opacity="0.4"/>
+                        <line x1="100" y1="35" x2="160" y2="35" stroke="#00e5ff" stroke-width="2" opacity="0.4"/>
+                        <rect x="115" y="28" width="30" height="14" rx="3" fill="rgba(0,229,255,0.1)" stroke="#00e5ff" stroke-width="1.5" opacity="0.5"/>
+                        <circle cx="130" cy="35" r="5" fill="none" stroke="#00f5d4" stroke-width="1.5" opacity="0.4"/>
+                        <circle cx="130" cy="35" r="2.5" fill="#00e5ff" opacity="0.3"/>
+                        <rect x="122" y="42" width="16" height="3" rx="1" fill="#00e5ff" opacity="0.3"/>
+                        <rect x="120" y="60" width="20" height="8" rx="2" fill="rgba(0,229,255,0.08)" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+                        <path d="M125 68 L125 73 M135 68 L135 73" stroke="#00e5ff" stroke-width="1" opacity="0.3"/>
+                        <line x1="110" y1="73" x2="150" y2="73" stroke="#00e5ff" stroke-width="2" opacity="0.35"/>
+                        <ellipse cx="130" cy="88" rx="18" ry="12" fill="rgba(0,245,212,0.06)" stroke="#00f5d4" stroke-width="1" opacity="0.4"/>
+                        <path d="M130 80 Q122 84 120 90 Q122 96 130 98 Q138 96 140 90 Q138 84 130 80" fill="none" stroke="#00f5d4" stroke-width="1" opacity="0.35"/>
+                        <path d="M130 82 Q124 86 123 90 Q124 94 130 96 Q136 94 137 90 Q136 86 130 82" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.3"/>
+                        <line x1="80" y1="30" x2="75" y2="25" stroke="#00e5ff" stroke-width="1" opacity="0.2" stroke-dasharray="2,2"/>
+                        <line x1="180" y1="30" x2="185" y2="25" stroke="#00e5ff" stroke-width="1" opacity="0.2" stroke-dasharray="2,2"/>
+                        <line x1="80" y1="45" x2="72" y2="48" stroke="#00e5ff" stroke-width="1" opacity="0.2" stroke-dasharray="2,2"/>
+                        <line x1="180" y1="45" x2="188" y2="48" stroke="#00e5ff" stroke-width="1" opacity="0.2" stroke-dasharray="2,2"/>
+                        <circle cx="50" cy="100" r="2" fill="#00e5ff" opacity="0.15"/>
+                        <circle cx="210" cy="105" r="2" fill="#00f5d4" opacity="0.15"/>
+                    </svg>
+                </div>
+                <div class="tech-icon">
+                    <svg class="tech-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                </div>
+                <h4>标本拍摄采集</h4>
+                <p>对实体标本进行高精度摄影记录，真实还原标本形态、色彩与纹理细节</p>
+            </div>
+            <div class="tech-item">
+                <div class="card-visual">
+                    <svg viewBox="0 0 260 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="tv2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="260" height="130" fill="url(#tv2)"/>
+                        <path d="M105 22 L155 22 L145 35 L115 35 Z" fill="rgba(0,229,255,0.1)" stroke="#00e5ff" stroke-width="1.2" opacity="0.45"/>
+                        <line x1="130" y1="35" x2="130" y2="42" stroke="#00e5ff" stroke-width="1.5" opacity="0.35"/>
+                        <rect x="40" y="50" width="48" height="32" rx="4" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+                        <rect x="44" y="55" width="40" height="3" rx="1" fill="#00e5ff" opacity="0.3"/>
+                        <rect x="44" y="61" width="32" height="2" rx="1" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="44" y="66" width="36" height="2" rx="1" fill="#00e5ff" opacity="0.22"/>
+                        <rect x="44" y="71" width="28" height="2" rx="1" fill="#00f5d4" opacity="0.2"/>
+                        <rect x="44" y="76" width="34" height="2" rx="1" fill="#00e5ff" opacity="0.18"/>
+                        <rect x="106" y="50" width="48" height="32" rx="4" fill="rgba(0,245,212,0.06)" stroke="#00f5d4" stroke-width="1" opacity="0.4"/>
+                        <rect x="110" y="55" width="40" height="3" rx="1" fill="#00f5d4" opacity="0.3"/>
+                        <rect x="110" y="61" width="32" height="2" rx="1" fill="#00e5ff" opacity="0.25"/>
+                        <rect x="110" y="66" width="36" height="2" rx="1" fill="#00f5d4" opacity="0.22"/>
+                        <rect x="110" y="71" width="28" height="2" rx="1" fill="#00e5ff" opacity="0.2"/>
+                        <rect x="110" y="76" width="34" height="2" rx="1" fill="#00f5d4" opacity="0.18"/>
+                        <rect x="172" y="50" width="48" height="32" rx="4" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+                        <rect x="176" y="55" width="40" height="3" rx="1" fill="#00e5ff" opacity="0.3"/>
+                        <rect x="176" y="61" width="32" height="2" rx="1" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="176" y="66" width="36" height="2" rx="1" fill="#00e5ff" opacity="0.22"/>
+                        <rect x="176" y="71" width="28" height="2" rx="1" fill="#00f5d4" opacity="0.2"/>
+                        <rect x="176" y="76" width="34" height="2" rx="1" fill="#00e5ff" opacity="0.18"/>
+                        <circle cx="200" cy="95" r="6" fill="rgba(0,245,212,0.08)" stroke="#00f5d4" stroke-width="1" opacity="0.4"/>
+                        <path d="M197 95 L200 98 L204 92" fill="none" stroke="#00f5d4" stroke-width="1.5" opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="40" cy="105" r="2" fill="#00e5ff" opacity="0.15"/>
+                        <circle cx="220" cy="30" r="2" fill="#00f5d4" opacity="0.15"/>
+                    </svg>
+                </div>
+                <div class="tech-icon">
+                    <svg class="tech-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"></path>
+                    </svg>
+                </div>
+                <h4>分类筛选浏览</h4>
+                <p>按无脊椎动物、鱼类、爬行动物等类别快速筛选，精准定位目标标本</p>
+            </div>
+            <div class="tech-item">
+                <div class="card-visual">
+                    <svg viewBox="0 0 260 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="tv3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="260" height="130" fill="url(#tv3)"/>
+                        <rect x="70" y="35" width="60" height="42" rx="5" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+                        <circle cx="85" cy="50" r="5" fill="#00e5ff" opacity="0.15"/>
+                        <rect x="95" y="46" width="28" height="2" rx="1" fill="#00f5d4" opacity="0.3"/>
+                        <rect x="95" y="52" width="22" height="2" rx="1" fill="#00e5ff" opacity="0.25"/>
+                        <rect x="78" y="60" width="44" height="2" rx="1" fill="#00f5d4" opacity="0.2"/>
+                        <rect x="78" y="66" width="36" height="2" rx="1" fill="#00e5ff" opacity="0.18"/>
+                        <rect x="78" y="72" width="40" height="2" rx="1" fill="#00f5d4" opacity="0.15"/>
+                        <circle cx="140" cy="56" r="18" fill="none" stroke="#00e5ff" stroke-width="2" opacity="0.5"/>
+                        <circle cx="140" cy="56" r="12" fill="rgba(0,229,255,0.04)" stroke="#00f5d4" stroke-width="1" opacity="0.35"/>
+                        <line x1="140" y1="56" x2="130" y2="46" stroke="#00e5ff" stroke-width="1.5" opacity="0.4"/>
+                        <circle cx="130" cy="46" r="2" fill="#00e5ff" opacity="0.5"/>
+                        <line x1="153" y1="56" x2="165" y2="56" stroke="#00e5ff" stroke-width="2" opacity="0.4" stroke-linecap="round"/>
+                        <line x1="140" y1="43" x2="140" y2="39" stroke="#00e5ff" stroke-width="2" opacity="0.3" stroke-linecap="round"/>
+                        <rect x="150" y="72" width="52" height="30" rx="5" fill="rgba(0,245,212,0.06)" stroke="#00f5d4" stroke-width="1.2" opacity="0.5"/>
+                        <rect x="155" y="78" width="42" height="2.5" rx="1" fill="#00f5d4" opacity="0.4"/>
+                        <rect x="155" y="84" width="34" height="2" rx="1" fill="#00e5ff" opacity="0.3"/>
+                        <rect x="155" y="89" width="38" height="2" rx="1" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="155" y="94" width="30" height="2" rx="1" fill="#00e5ff" opacity="0.2"/>
+                        <line x1="130" y1="68" x2="150" y2="78" stroke="#00e5ff" stroke-width="0.5" opacity="0.2" stroke-dasharray="2,2"/>
+                        <circle cx="40" cy="100" r="2" fill="#00e5ff" opacity="0.15"/>
+                        <circle cx="220" cy="35" r="2" fill="#00f5d4" opacity="0.15"/>
+                    </svg>
+                </div>
+                <div class="tech-icon">
+                    <svg class="tech-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h6v6M14 10l7-7M9 21H3v-6M10 14l-7 7"></path>
+                    </svg>
+                </div>
+                <h4>详情交互查看</h4>
+                <p>点击标本卡片弹出详情面板，查看学名、分布海域、栖息深度、保护等级等信息</p>
+            </div>
+            <div class="tech-item">
+                <div class="card-visual">
+                    <svg viewBox="0 0 260 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="tv4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="260" height="130" fill="url(#tv4)"/>
+                        <ellipse cx="130" cy="32" rx="38" ry="15" fill="#00e5ff" opacity="0.1"/>
+                        <ellipse cx="130" cy="29" rx="30" ry="11" fill="#00e5ff" opacity="0.08"/>
+                        <ellipse cx="130" cy="27" rx="22" ry="8" fill="#00f5d4" opacity="0.06"/>
+                        <line x1="130" y1="46" x2="110" y2="70" stroke="#00e5ff" stroke-width="1" opacity="0.25" stroke-dasharray="3,2"/>
+                        <line x1="130" y1="46" x2="150" y2="70" stroke="#00e5ff" stroke-width="1" opacity="0.25" stroke-dasharray="3,2"/>
+                        <line x1="130" y1="46" x2="130" y2="72" stroke="#00f5d4" stroke-width="1" opacity="0.25" stroke-dasharray="3,2"/>
+                        <rect x="70" y="65" width="120" height="42" rx="6" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="1.2" opacity="0.45"/>
+                        <rect x="70" y="65" width="120" height="10" rx="6" fill="rgba(0,229,255,0.08)"/>
+                        <circle cx="77" cy="70" r="2" fill="#ff6b6b" opacity="0.4"/>
+                        <circle cx="84" cy="70" r="2" fill="#ffd93d" opacity="0.4"/>
+                        <circle cx="91" cy="70" r="2" fill="#00f5d4" opacity="0.4"/>
+                        <rect x="80" y="80" width="28" height="22" rx="3" fill="rgba(0,245,212,0.06)" stroke="#00f5d4" stroke-width="0.8" opacity="0.35"/>
+                        <circle cx="94" cy="88" r="4" fill="#00f5d4" opacity="0.12"/>
+                        <rect x="88" y="96" width="12" height="1.5" rx="1" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="115" y="80" width="65" height="3" rx="1" fill="#00e5ff" opacity="0.3"/>
+                        <rect x="115" y="86" width="50" height="2" rx="1" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="115" y="91" width="55" height="2" rx="1" fill="#00e5ff" opacity="0.22"/>
+                        <rect x="115" y="96" width="42" height="2" rx="1" fill="#00f5d4" opacity="0.2"/>
+                        <circle cx="45" cy="25" r="2" fill="#00e5ff" opacity="0.15"/>
+                        <circle cx="215" cy="100" r="2" fill="#00f5d4" opacity="0.15"/>
+                    </svg>
+                </div>
+                <div class="tech-icon">
+                    <svg class="tech-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                        <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path>
+                    </svg>
+                </div>
+                <h4>云端标本展馆</h4>
+                <p>基于网页构建线上展馆，打开浏览器即可访问，无需安装任何软件或插件</p>
+            </div>
+            <div class="tech-item">
+                <div class="card-visual">
+                    <svg viewBox="0 0 260 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="tv5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="260" height="130" fill="url(#tv5)"/>
+                        <rect x="70" y="28" width="120" height="70" rx="6" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="1.2" opacity="0.45"/>
+                        <rect x="70" y="28" width="120" height="10" rx="6" fill="rgba(0,229,255,0.08)"/>
+                        <circle cx="77" cy="33" r="2" fill="#ff6b6b" opacity="0.4"/>
+                        <circle cx="84" cy="33" r="2" fill="#ffd93d" opacity="0.4"/>
+                        <circle cx="91" cy="33" r="2" fill="#00f5d4" opacity="0.4"/>
+                        <rect x="78" y="44" width="48" height="36" rx="3" fill="rgba(0,245,212,0.05)" stroke="#00f5d4" stroke-width="0.8" opacity="0.35"/>
+                        <path d="M88 65 Q92 58 96 62 Q100 56 104 60 Q108 54 112 62 Q116 58 120 65" fill="none" stroke="#00f5d4" stroke-width="1.2" opacity="0.4" stroke-linecap="round"/>
+                        <line x1="82" y1="70" x2="122" y2="70" stroke="#00e5ff" stroke-width="0.8" opacity="0.2"/>
+                        <line x1="82" y1="75" x2="118" y2="75" stroke="#00e5ff" stroke-width="0.8" opacity="0.15"/>
+                        <circle cx="92" cy="52" r="3" fill="#00e5ff" opacity="0.2"/>
+                        <circle cx="108" cy="50" r="2" fill="#00f5d4" opacity="0.15"/>
+                        <rect x="134" y="46" width="48" height="3" rx="1" fill="#00e5ff" opacity="0.3"/>
+                        <rect x="134" y="53" width="38" height="2" rx="1" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="134" y="58" width="42" height="2" rx="1" fill="#00e5ff" opacity="0.22"/>
+                        <rect x="134" y="63" width="36" height="2" rx="1" fill="#00f5d4" opacity="0.2"/>
+                        <rect x="134" y="68" width="40" height="2" rx="1" fill="#00e5ff" opacity="0.18"/>
+                        <rect x="134" y="73" width="34" height="2" rx="1" fill="#00f5d4" opacity="0.15"/>
+                        <rect x="134" y="80" width="48" height="14" rx="3" fill="rgba(0,229,255,0.04)" stroke="#00e5ff" stroke-width="0.8" opacity="0.3"/>
+                        <circle cx="142" cy="87" r="3" fill="#00e5ff" opacity="0.2"/>
+                        <rect x="148" y="84" width="28" height="2" rx="1" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="148" y="89" width="22" height="2" rx="1" fill="#00e5ff" opacity="0.2"/>
+                        <line x1="130" y1="98" x2="130" y2="106" stroke="#00e5ff" stroke-width="2" opacity="0.3"/>
+                        <line x1="120" y1="106" x2="140" y2="106" stroke="#00e5ff" stroke-width="2" opacity="0.3"/>
+                        <circle cx="45" cy="100" r="2" fill="#00e5ff" opacity="0.15"/>
+                        <circle cx="215" cy="25" r="2" fill="#00f5d4" opacity="0.15"/>
+                    </svg>
+                </div>
+                <div class="tech-icon">
+                    <svg class="tech-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                </div>
+                <h4>数字科普展示</h4>
+                <p>融合海洋生物多样性、深海探索等科普知识，标本展示与科学教育相辅相成</p>
+            </div>
+            <div class="tech-item">
+                <div class="card-visual">
+                    <svg viewBox="0 0 260 130" preserveAspectRatio="xMidYMid slice">
+                        <defs><linearGradient id="tv6" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a4a"/><stop offset="100%" stop-color="#061528"/></linearGradient></defs>
+                        <rect width="260" height="130" fill="url(#tv6)"/>
+                        <rect x="25" y="42" width="40" height="56" rx="5" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="1.2" opacity="0.45"/>
+                        <rect x="28" y="46" width="34" height="40" rx="2" fill="rgba(0,245,212,0.04)"/>
+                        <circle cx="45" cy="56" r="4" fill="#00e5ff" opacity="0.15"/>
+                        <rect x="32" y="63" width="26" height="2" rx="1" fill="#00f5d4" opacity="0.3"/>
+                        <rect x="32" y="68" width="20" height="2" rx="1" fill="#00e5ff" opacity="0.25"/>
+                        <rect x="32" y="73" width="24" height="2" rx="1" fill="#00f5d4" opacity="0.22"/>
+                        <rect x="32" y="78" width="18" height="2" rx="1" fill="#00e5ff" opacity="0.18"/>
+                        <circle cx="45" cy="92" r="2.5" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.3"/>
+                        <rect x="95" y="30" width="70" height="48" rx="5" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="1.2" opacity="0.45"/>
+                        <rect x="99" y="34" width="62" height="34" rx="2" fill="rgba(0,245,212,0.04)"/>
+                        <circle cx="115" cy="48" r="5" fill="#00e5ff" opacity="0.15"/>
+                        <path d="M125 55 Q130 48 135 52 Q140 46 145 52 Q150 48 155 55" fill="none" stroke="#00f5d4" stroke-width="1.2" opacity="0.35" stroke-linecap="round"/>
+                        <line x1="105" y1="62" x2="155" y2="62" stroke="#00e5ff" stroke-width="0.8" opacity="0.2"/>
+                        <line x1="105" y1="66" x2="148" y2="66" stroke="#00e5ff" stroke-width="0.8" opacity="0.15"/>
+                        <rect x="125" y="78" width="10" height="4" rx="1" fill="#00e5ff" opacity="0.3"/>
+                        <line x1="120" y1="82" x2="140" y2="82" stroke="#00e5ff" stroke-width="2" opacity="0.25"/>
+                        <rect x="195" y="52" width="40" height="32" rx="4" fill="rgba(0,245,212,0.06)" stroke="#00f5d4" stroke-width="1.2" opacity="0.45"/>
+                        <rect x="199" y="56" width="32" height="20" rx="2" fill="rgba(0,229,255,0.04)"/>
+                        <circle cx="210" cy="64" r="3" fill="#00e5ff" opacity="0.15"/>
+                        <rect x="216" y="61" width="12" height="1.5" rx="1" fill="#00f5d4" opacity="0.25"/>
+                        <rect x="216" y="65" width="10" height="1.5" rx="1" fill="#00e5ff" opacity="0.2"/>
+                        <rect x="199" y="79" width="32" height="2" rx="1" fill="#00f5d4" opacity="0.2"/>
+                        <line x1="65" y1="65" x2="95" y2="55" stroke="#00e5ff" stroke-width="0.8" opacity="0.2" stroke-dasharray="2,2"/>
+                        <line x1="165" y1="55" x2="195" y2="65" stroke="#00f5d4" stroke-width="0.8" opacity="0.2" stroke-dasharray="2,2"/>
+                        <circle cx="45" cy="115" r="2" fill="#00e5ff" opacity="0.15"/>
+                        <circle cx="215" cy="115" r="2" fill="#00f5d4" opacity="0.15"/>
+                    </svg>
+                </div>
+                <div class="tech-icon">
+                    <svg class="tech-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                </div>
+                <h4>多端适配访问</h4>
+                <p>响应式设计，PC、平板、手机全终端覆盖，随时随地浏览海洋标本</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 标本详情模态框 -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">✕</span>
+            <div class="modal-image" id="modalImageContainer">
+                <!-- 动态图或默认SVG -->
+            </div>
+            <h2 class="modal-title" id="modalTitle">标本名称</h2>
+            <p class="modal-latin" id="modalLatin">Scientific name</p>
+            
+            <!-- 语音导览按钮 -->
+            <button class="voice-guide-btn" id="voiceGuideBtn" onclick="toggleVoiceGuide()">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: middle;">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                <span>语音导览</span>
+                <div class="voice-wave" id="voiceWave">
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                </div>
+            </button>
+
+            <div class="modal-info-grid" id="modalInfoGrid">
+                <!-- 动态填充 -->
+            </div>
+            <div class="modal-desc" id="modalDesc">
+                标本详细描述...
+            </div>
+        </div>
+    </div>
+
+    <!-- 标本对比浮动托盘 -->
+    <div class="compare-tray" id="compareTray">
+        <div class="compare-tray-content">
+            <span class="compare-tray-title">已选择对比标本 (<span id="compareCount">0</span>/2)</span>
+            <div class="compare-slots" id="compareSlots">
+                <div class="compare-slot compare-slot-empty">待选择标本一</div>
+                <div class="compare-slot compare-slot-empty">待选择标本二</div>
+            </div>
+            <div class="compare-actions">
+                <button class="compare-start-btn" id="compareStartBtn" disabled onclick="openCompareModal()">开始对比</button>
+                <button class="compare-clear-btn" onclick="clearCompare()">清空</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 标本对比分析模态框 -->
+    <div class="modal-overlay" id="compareModalOverlay">
+        <div class="modal-content compare-modal-content">
+            <span class="modal-close" id="compareModalClose" onclick="closeCompareModal()">✕</span>
+            <h2 class="modal-title" style="text-align: center; margin-bottom: 24px;">标本对比分析</h2>
+            <div class="compare-table-container">
+                <table class="compare-table">
+                    <thead>
+                        <tr id="compareTableHeader">
+                            <!-- 动态头部 -->
+                        </tr>
+                    </thead>
+                    <tbody id="compareTableBody">
+                        <!-- 动态对比项 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 悬浮收藏按钮 (我的标本册) -->
+    <div class="floating-fav-badge" id="floatingFavBadge" onclick="toggleFavSidebar()">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+        </svg>
+        <span class="badge-count" id="favBadgeCount">0</span>
+    </div>
+
+    <!-- 收藏夹滑动侧边栏 -->
+    <div class="favorites-sidebar" id="favoritesSidebar">
+        <div class="fav-header">
+            <span class="fav-title">我的海洋标本册</span>
+            <button class="fav-close" onclick="toggleFavSidebar()">✕</button>
+        </div>
+        <div class="fav-list" id="favList">
+            <!-- 动态收藏标本 -->
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-logo">
+            <svg class="logo-svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M16.2 7.8l-2 5.6-5.6 2 2-5.6 5.6-2z"></path>
+                <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
+            </svg>
+            <span>数字海洋标本云展馆</span>
+        </div>
+        <p class="footer-text">科创赋能新质生产力 · 让海洋科学触手可及</p>
+        <div class="footer-team" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px;">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, var(--ocean-cyan), var(--ocean-teal)); color: var(--ocean-deep); font-size: 12px; font-weight: 900;">E</span>
+            <span style="font-size: 14px; font-weight: 600; color: var(--ocean-teal); letter-spacing: 1px;">研学团队 · E路逐梦</span>
+        </div>
+        <div class="footer-links">
+            <a href="#hero">首页</a>
+            <a href="#intro">展馆简介</a>
+            <a href="#specimens">标本展示</a>
+            <a href="#science">数字科普</a>
+            <a href="#tech">科创赋能</a>
+        </div>
+        <div class="footer-copy">
+            © 2026 数字海洋标本云展馆 · Digital Marine Specimen Cloud Exhibition Hall
+        </div>
+    </footer>
+
+    <script>
+        // ===== 海洋粒子背景 (仿发光浮游生物) =====
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const count = 40;
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 8 + 4;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 20 + 15) + 's';
+                p.style.animationDelay = Math.random() * 20 + 's';
+                p.style.opacity = Math.random() * 0.45 + 0.15;
+                container.appendChild(p);
+            }
+        }
+        createParticles();
+
+        // ===== 移动端导航 =====
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+        });
+        navLinks.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', () => navLinks.classList.remove('open'));
+        });
+
+        // ===== 数字递增动效 =====
+        function animateNumberOnLoad(id, target, duration = 1500) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            let start = 0;
+            let startTime = null;
+
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                el.textContent = Math.floor(progress * (target - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    el.textContent = target;
+                }
+            }
+            window.requestAnimationFrame(step);
+        }
+
+        // ===== 标本数据（20个标本，涵盖4门5纲） =====
+        const specimens = [
+            // ===== 软体动物门 - 腹足纲（螺类） =====
+            {
+                name: '棒锥螺',
+                latin: 'Turritella bacillum',
+                category: 'invertebrate',
+                depth: '潮间带至浅海',
+                depthVal: 5,
+                region: '南海、东海',
+                size: '壳高5~10cm',
+                sizeVal: 8,
+                status: '无危',
+                level: 0,
+                zones: ['epipelagic'],
+                desc: '棒锥螺是海洋腹足纲软体动物，贝壳呈高锥形，螺层多而紧密。分布于中国沿海潮间带至浅海沙泥底质中，常大量聚集栖息，是潮间带常见物种。',
+                image: 'images/01.jpg'
+            },
+            {
+                name: '珠带拟蟹螺',
+                latin: 'Cerithidea cingulata',
+                category: 'invertebrate',
+                depth: '潮间带泥沙滩',
+                depthVal: 2,
+                region: '全国沿海',
+                size: '壳高约3cm',
+                sizeVal: 3,
+                status: '无危',
+                level: 0,
+                zones: ['epipelagic'],
+                desc: '珠带拟蟹守螺，贝壳塔形，壳表满布串珠状螺肋，壳面黄褐色具紫褐色螺带。生活于潮间带中低潮区泥沙质海滩，是我国沿海潮间带常见优势种。',
+                image: 'images/04.jpg'
+            },
+            {
+                name: '凤尾螺',
+                latin: 'Charonia tritonis',
+                category: 'invertebrate',
+                depth: '珊瑚礁浅海',
+                depthVal: 15,
+                region: '印太海域、南海',
+                size: '壳高20~40cm',
+                sizeVal: 30,
+                status: '濒危',
+                level: 2,
+                zones: ['epipelagic'],
+                desc: '凤尾螺又称大法螺，是世界上最大的腹足类之一。壳体硕大优美，呈乳白色带棕褐色斑纹。以其壳吹响可发出浑厚声响，自古被用作法器。是珊瑚礁生态系统的关键物种，以棘冠海星为食。',
+                image: 'images/05.jpg'
+            },
+            {
+                name: '唐冠螺·万宝螺',
+                latin: 'Cassis cornuta / Cypraecassis rufa',
+                category: 'invertebrate',
+                depth: '浅海沙底、珊瑚礁',
+                depthVal: 25,
+                region: '印太海域、南海',
+                size: '壳高10~15cm',
+                sizeVal: 15,
+                status: '易危',
+                level: 1,
+                zones: ['epipelagic'],
+                desc: '唐冠螺因壳形似唐代冠帽而得名，壳体厚重，体螺层膨大，壳面具粗壮瘤状突起；万宝螺又称宝冠螺，壳呈卵圆形，壳面紫褐色杂黄白色斑，壳口内唇滑层橙红色富有光泽。二者均为大型珍贵贝类，常并列展示，色彩与造型相得益彰，极具观赏价值。',
+                image: 'images/06.jpg'
+            },
+            // ===== 软体动物门 - 头足纲 =====
+            {
+                name: '菱鳍乌贼',
+                latin: 'Thysanoteuthis rhombus',
+                category: 'invertebrate',
+                depth: '海洋表层',
+                depthVal: 80,
+                region: '全球温热带海域',
+                size: '胴长约60cm',
+                sizeVal: 60,
+                status: '无危',
+                level: 0,
+                zones: ['epipelagic'],
+                desc: '菱鳍乌贼又称钻石乌贼，是大型外洋性头足类。肉鳍厚而发达，全包胴部，两鳍相接呈菱形如风筝。体表密布红色素斑，最大胴长可达1米。是已知唯一实行一夫一妻制的头足类。',
+                image: 'images/08.jpg'
+            },
+            {
+                name: '鹦鹉螺',
+                latin: 'Nautilus pompilius',
+                category: 'invertebrate',
+                depth: '水深100~600m',
+                depthVal: 350,
+                region: '印太海域、南海',
+                size: '壳径约20cm',
+                sizeVal: 20,
+                status: '濒危',
+                level: 2,
+                zones: ['epipelagic', 'mesopelagic'],
+                desc: '鹦鹉螺是古老的海洋软体动物，被誉为"活化石"。外壳呈螺旋形，内部分多个气室可调节浮力。夜间上升至浅水觅食，白天潜入深水。被列为国家一级保护动物，CITES附录II物种。',
+                image: 'images/09.jpg'
+            },
+            // ===== 刺胞动物门 / 珊瑚纲 =====
+            {
+                name: '笙珊瑚',
+                latin: 'Tubipora musica',
+                category: 'invertebrate',
+                depth: '浅海珊瑚礁',
+                depthVal: 15,
+                region: '印太海域、南海',
+                size: '高约10~20cm',
+                sizeVal: 15,
+                status: '易危',
+                level: 1,
+                zones: ['epipelagic'],
+                desc: '笙珊瑚因其骨骼管状排列形似古代乐器笙而得名。由红色钙质骨管平行排列组成，管间有横向连接板。群体呈暗红色，触手伸展时呈绿色或灰色，是珊瑚礁中独特的造礁生物。',
+                image: 'images/10.jpg'
+            },
+            {
+                name: '红珊瑚',
+                latin: 'Corallium rubrum',
+                category: 'invertebrate',
+                depth: '水深100~1000m',
+                depthVal: 550,
+                region: '地中海、太平洋',
+                size: '高约10~30cm',
+                sizeVal: 20,
+                status: '濒危',
+                level: 2,
+                zones: ['mesopelagic', 'bathypelagic'],
+                desc: '红珊瑚是珍贵的深海珊瑚，骨骼呈鲜红色至粉红色，质地细腻坚硬。生长极其缓慢，每年仅增长约0.3mm。自古被视为珍贵珠宝原料，被列为CITES附录II保护物种，采捞受到严格管制。',
+                image: 'images/11.jpg'
+            },
+            // ===== 多孔动物门 =====
+            {
+                name: '海绵',
+                latin: 'Porifera spp.',
+                category: 'invertebrate',
+                depth: '潮间带至深海',
+                depthVal: 500,
+                region: '全球海域',
+                size: '大小不一',
+                sizeVal: 30,
+                status: '无危',
+                level: 0,
+                zones: ['epipelagic', 'mesopelagic', 'bathypelagic'],
+                desc: '海绵是最原始的多细胞动物，没有真正的组织 and 器官。体壁布满孔道，通过鞭毛摆动产生水流过滤食物。在海洋生态中扮演重要角色，是研究动物起源与进化的关键类群。',
+                image: 'images/12.jpg'
+            },
+            // ===== 脊索动物门 - 软骨鱼纲 =====
+            {
+                name: '中国团扇鳐',
+                latin: 'Platyrhina sinensis',
+                category: 'fish',
+                depth: '近海浅水',
+                depthVal: 30,
+                region: '东海、南海',
+                size: '体长约50cm',
+                sizeVal: 50,
+                status: '易危',
+                level: 1,
+                zones: ['epipelagic'],
+                desc: '中国团扇鳐体盘近圆形，形似团扇，尾细长具尾鳍。体背具细小鳞片，呈褐色或灰褐色。栖息于近海沙泥底质，以底栖甲壳类和小鱼为食。是中国沿海特有种，数量因过度捕捞而减少。',
+                image: 'images/13.jpg'
+            },
+            // ===== 脊索动物门 - 硬骨鱼纲 =====
+            {
+                name: '牙鲆',
+                latin: 'Paralichthys olivaceus',
+                category: 'fish',
+                depth: '近海底层',
+                depthVal: 60,
+                region: '中国沿海、日本',
+                size: '体长30~60cm',
+                sizeVal: 45,
+                status: '无危',
+                level: 0,
+                zones: ['epipelagic'],
+                desc: '牙鲆是典型的比目鱼，身体扁平不对称，双眼位于身体左侧。栖息于沙泥底质海域，体色可随环境变化。是重要的经济鱼类，中国北方重要的海水养殖品种之一。',
+                image: 'images/14.jpg'
+            },
+            {
+                name: '单棘豹鲂鮄',
+                latin: 'Dactyloptena peterseni',
+                category: 'fish',
+                depth: '水深50~210m',
+                depthVal: 130,
+                region: '东海、南海',
+                size: '体长约36cm',
+                sizeVal: 36,
+                status: '未评估',
+                level: 0,
+                zones: ['epipelagic', 'mesopelagic'],
+                desc: '单棘豹鲂鮄体延长稍纵扁，头部被骨板，枕骨区具一游离延长的背棘。胸鳍极度扩大如翼，散布蓝绿色斑纹。栖息于沙泥底质底层，以底栖甲壳类为食。胸鳍展开时极为壮观。',
+                image: 'images/15.jpg'
+            },
+            {
+                name: '粒突箱鲀',
+                latin: 'Ostracion cubicus',
+                category: 'fish',
+                depth: '珊瑚礁浅海',
+                depthVal: 20,
+                region: '印太海域、南海',
+                size: '体长约15cm',
+                sizeVal: 15,
+                status: '无危',
+                level: 0,
+                zones: ['epipelagic'],
+                desc: '粒突箱鲀体被硬骨板包裹呈箱形，截面近四方形，如同一个小盒子。幼鱼体色鲜黄带黑点，成鱼体色转为暗褐。受惊时可分泌有毒黏液自卫。行动笨拙，靠尾鳍摆动游进。',
+                image: 'images/16.jpg'
+            },
+            {
+                name: '六斑刺鲀',
+                latin: 'Diodon holocanthus',
+                category: 'fish',
+                depth: '珊瑚礁浅海',
+                depthVal: 15,
+                region: '全球热带海域',
+                size: '体长20~30cm',
+                sizeVal: 25,
+                status: '无危',
+                level: 0,
+                zones: ['epipelagic'],
+                desc: '六斑刺鲀全身布满长棘，遇敌时能吞水或空气使身体膨胀如球，棘刺竖起形成防御。体表具深色大斑，分布于珊瑚礁及岩礁海域。夜间活动，以底栖无脊椎动物为食。',
+                image: 'images/17.jpg'
+            },
+            {
+                name: '白边锯鳞鱼',
+                latin: 'Myripristis murdjan',
+                category: 'fish',
+                depth: '水深3~50m珊瑚礁',
+                depthVal: 25,
+                region: '印太海域、南海',
+                size: '体长20~27cm',
+                sizeVal: 23,
+                status: '无危',
+                level: 0,
+                zones: ['epipelagic'],
+                desc: '白边锯鳞鱼体侧扁呈椭圆形，鳞片边缘具锯齿，体色鲜红，各鳍边缘白色。眼大，适应暗光环境。昼间藏于珊瑚礁洞穴中，夜间外出觅食，以浮游动物为食。是珊瑚礁区常见鱼类。',
+                image: 'images/18.jpg'
+            },
+            {
+                name: '须蓑鲉',
+                latin: 'Apistus carinatus',
+                category: 'fish',
+                depth: '水深14~60m',
+                depthVal: 40,
+                region: '东海、南海',
+                size: '体长18~20cm',
+                sizeVal: 19,
+                status: '无危',
+                level: 0,
+                zones: ['epipelagic'],
+                desc: '须蓑鲉体延长侧扁，下颌具3条长须，胸鳍宽大如翼，最下方具游离鳍条。体色浅红带金属光泽，背鳍具大黑斑。白天埋身于沙中仅露双眼，利用触须探察猎物，鳍棘具毒腺。',
+                image: 'images/19.jpg'
+            },
+            {
+                name: '沟鲹',
+                latin: 'Atropus atropus',
+                category: 'fish',
+                depth: '近海中上层',
+                depthVal: 35,
+                region: '东海、南海',
+                size: '体长20~30cm',
+                sizeVal: 25,
+                status: '无危',
+                level: 0,
+                zones: ['epipelagic'],
+                desc: '沟鲹体侧扁呈椭圆形，体侧上半部蓝灰色，腹部银白。侧线后半部被骨质棱鳞，胸部腹面具一深沟。喜集群游动于近海中上层水域，以小鱼和浮游动物为食，是常见经济鱼类。',
+                image: 'images/20.jpg'
+            },
+            // ===== 脊索动物门 - 爬行纲 / 龟鳖目 =====
+            {
+                name: '棱皮龟',
+                latin: 'Dermochelys coriacea',
+                category: 'reptile',
+                depth: '远洋至近海',
+                depthVal: 1100,
+                region: '全球海域',
+                size: '体长2~3m',
+                sizeVal: 250,
+                status: '极危',
+                level: 3,
+                zones: ['epipelagic', 'mesopelagic', 'bathypelagic'],
+                desc: '棱皮龟是现存最大的海龟，背甲可达2.5米，重逾900公斤。体表覆盖革质皮肤而非角质盾片，背面具7条纵棱。能潜入深海千余米觅食水母。是远洋洄游性物种，面临误捕和海洋塑料污染威胁，被列为国家一级保护动物。',
+                image: 'images/22.jpg'
+            },
+            // ===== 脊索动物门 - 硬骨鱼纲（新增） =====
+            {
+                name: '燕鱼',
+                latin: 'Platax teira',
+                category: 'fish',
+                depth: '水深0~70m',
+                depthVal: 35,
+                region: '印度-太平洋、南海',
+                size: '体长可达50~60cm',
+                sizeVal: 55,
+                status: '未评估',
+                level: 0,
+                zones: ['epipelagic'],
+                desc: '燕鱼又称尖翅燕鱼、蝙蝠鱼，体呈菱形极侧扁，体侧具3条黑色宽横带。幼鱼体色枯黄褐，会拟态枯叶漂浮于水面躲藏；成鱼喜群游于较深珊瑚礁斜坡。以浮游生物及藻类为食，性温驯易亲近潜水者，是热门观赏鱼。',
+                image: 'images/23.jpg'
+            },
+            {
+                name: '少女鱼',
+                latin: 'Coradion chrysozonus',
+                category: 'fish',
+                depth: '水深1~60m',
+                depthVal: 30,
+                region: '印度-西太平洋、南海',
+                size: '体长约15cm',
+                sizeVal: 15,
+                status: '无危',
+                level: 0,
+                zones: ['epipelagic'],
+                desc: '少女鱼又称金斑少女鱼，属蝴蝶鱼科。体甚侧扁而高，略呈卵圆形，体白色具黑眼带，体前端有2条褐色横带。栖息于岩岸淤沙水域或稀疏珊瑚区，以海绵为食。体型娇小色彩素雅，为观赏性鱼类。',
+                image: 'images/24.jpg'
+            }
+        ];
+
+        // 标本分类映射
+        const categoryNames = {
+            fish: '鱼类',
+            invertebrate: '无脊椎动物',
+            reptile: '爬行动物'
+        };
+
+        // ===== 渲染标本卡片 (支持搜索、分类、状态筛选及多字段排序) =====
+        let activeCategory = 'all';
+        let favorites = JSON.parse(localStorage.getItem('marine_favorites') || '[]');
+        let compareList = [];
+
+        function isFavorited(id) {
+            return favorites.includes(id);
+        }
+
+        function isInCompare(id) {
+            return compareList.includes(id);
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case '极危': return 'status-cr';
+                case '濒危': return 'status-en';
+                case '易危': return 'status-vu';
+                case '无危': return 'status-lc';
+                default: return 'status-ne';
+            }
+        }
+
+        function renderSpecimens() {
+            const grid = document.getElementById('specimenGrid');
+            const query = document.getElementById('specimenSearch').value.toLowerCase().trim();
+            const sortVal = document.getElementById('sortSelect').value;
+            const statusVal = document.getElementById('statusSelect').value;
+
+            // 1. 过滤逻辑
+            let filtered = specimens.filter(s => {
+                const matchesCategory = (activeCategory === 'all' || s.category === activeCategory);
+                
+                const matchesQuery = !query || 
+                    s.name.toLowerCase().includes(query) || 
+                    (s.latin && s.latin.toLowerCase().includes(query)) || 
+                    (s.region && s.region.toLowerCase().includes(query)) ||
+                    (s.desc && s.desc.toLowerCase().includes(query));
+                
+                let matchesStatus = true;
+                if (statusVal === 'threatened') {
+                    matchesStatus = (s.status === '极危' || s.status === '濒危' || s.status === '易危');
+                } else if (statusVal === 'leastConcern') {
+                    matchesStatus = (s.status === '无危');
+                }
+                
+                return matchesCategory && matchesQuery && matchesStatus;
+            });
+
+            // 2. 排序逻辑
+            if (sortVal === 'sizeDesc') {
+                filtered.sort((a, b) => b.sizeVal - a.sizeVal);
+            } else if (sortVal === 'sizeAsc') {
+                filtered.sort((a, b) => a.sizeVal - b.sizeVal);
+            } else if (sortVal === 'depthDesc') {
+                filtered.sort((a, b) => b.depthVal - a.depthVal);
+            } else if (sortVal === 'depthAsc') {
+                filtered.sort((a, b) => a.depthVal - b.depthVal);
+            }
+
+            // 3. 渲染 DOM
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="specimen-empty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="width: 56px; height: 56px; color: var(--ocean-cyan); opacity: 0.7; margin-bottom: 20px;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 8v4M12 16h.01"></path>
+                        </svg>
+                        <h3>未找到匹配的标本</h3>
+                        <p style="margin-top: 6px;">您可以尝试更换检索词或重置筛选条件</p>
+                    </div>
+                `;
+                document.getElementById('statSpecimens').textContent = 0;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(s => {
+                const id = specimens.indexOf(s);
+                const placeholderSVG = `<svg class="placeholder-icon" viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                           <circle cx="12" cy="12" r="10"></circle>
+                           <path d="M12 2v20M2 12h20"></path>
+                       </svg>`;
+                const dualClass = s.image2 ? ' dual' : '';
+                let imgHTML;
+                // Helper: convert image path to thumbnail
+                const thumb = (path) => path ? path.replace('images/', 'images/thumb/') : path;
+                if (s.image2) {
+                    imgHTML = `<img src="${thumb(s.image)}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'"><img src="${thumb(s.image2)}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">`;
+                } else if (s.image) {
+                    imgHTML = `<img src="${thumb(s.image)}" alt="${s.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder-icon" style="display:none;color:var(--ocean-cyan);opacity:0.5;filter:drop-shadow(0 0 10px rgba(0,229,255,0.3));"><svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"></path></svg></span>`;
+                } else {
+                    imgHTML = placeholderSVG;
+                }
+
+                const isFav = isFavorited(id);
+                const isComp = isInCompare(id);
+
+                return `
+                <div class="specimen-card" data-index="${id}" onclick="openSpecimenModal(${id})">
+                    <div class="card-actions-overlay">
+                        <button class="card-action-btn fav-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite(${id})" title="收藏标本">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                            </svg>
+                        </button>
+                        <button class="card-action-btn comp-btn ${isComp ? 'active' : ''}" onclick="event.stopPropagation(); toggleCompare(${id})" title="加入对比">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18 5v4"></path>
+                                <path d="M20 7h-4"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="specimen-image${dualClass}">
+                        ${imgHTML}
+                        <span class="category-tag">${categoryNames[s.category] || '未分类'}</span>
+                    </div>
+                    <div class="specimen-body">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px;">
+                            <h3 class="specimen-name" style="margin-bottom:0; font-size:18px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.name}</h3>
+                            <span class="status-tag ${getStatusClass(s.status)}">${s.status}</span>
+                        </div>
+                        <p class="specimen-latin" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.latin || ''}</p>
+                        <p class="specimen-desc">${s.desc || '暂无描述'}</p>
+                        <div class="specimen-meta">
+                            <span class="depth">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                ${s.region || '未知海域'}
+                            </span>
+                            <span class="view-btn">
+                                查看详情 
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+
+            animateNumberOnLoad('statSpecimens', filtered.length);
+            initTilt();
+        }
+
+        // 统一过滤监听
+        function handleFilterChange() {
+            renderSpecimens();
+        }
+
+        // ===== 3D 卡片悬停倾斜 & 扫光逻辑 =====
+        function initTilt() {
+            const cards = document.querySelectorAll('.specimen-card');
+            cards.forEach(card => {
+                if (!card.querySelector('.card-glare')) {
+                    const glare = document.createElement('div');
+                    glare.className = 'card-glare';
+                    card.appendChild(glare);
+                }
+                
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const xc = rect.width / 2;
+                    const yc = rect.height / 2;
+                    const dx = x - xc;
+                    const dy = y - yc;
+                    
+                    const tiltX = -(dy / yc) * 10;
+                    const tiltY = (dx / xc) * 10;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-6px)`;
+                    
+                    const glare = card.querySelector('.card-glare');
+                    if (glare) {
+                        const px = (x / rect.width) * 100;
+                        const py = (y / rect.height) * 100;
+                        glare.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 70%)`;
+                    }
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
+                    const glare = card.querySelector('.card-glare');
+                    if (glare) glare.style.background = 'transparent';
+                });
+            });
+        }
+
+        // ===== 收藏夹核心功能 (LocalStorage) =====
+        function toggleFavorite(id) {
+            const index = favorites.indexOf(id);
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(id);
+            }
+            localStorage.setItem('marine_favorites', JSON.stringify(favorites));
+            updateFavUI();
+            
+            // 实时更新当前卡片的状态
+            const btn = document.querySelector(`.specimen-card[data-index="${id}"] .fav-btn`);
+            if (btn) {
+                btn.classList.toggle('active', isFavorited(id));
+                btn.querySelector('svg').setAttribute('fill', isFavorited(id) ? 'currentColor' : 'none');
+            }
+            
+            if (document.getElementById('favoritesSidebar').classList.contains('active')) {
+                renderFavSidebar();
+            }
+        }
+
+        function updateFavUI() {
+            document.getElementById('favBadgeCount').textContent = favorites.length;
+        }
+
+        function toggleFavSidebar() {
+            const sidebar = document.getElementById('favoritesSidebar');
+            sidebar.classList.toggle('active');
+            if (sidebar.classList.contains('active')) {
+                renderFavSidebar();
+            }
+        }
+
+        function renderFavSidebar() {
+            const list = document.getElementById('favList');
+            if (favorites.length === 0) {
+                list.innerHTML = `<div class="fav-empty-msg">您的收藏夹空空如也<br><span style="font-size:12px;opacity:0.6;display:block;margin-top:6px;">点击标本卡片上的星标即可收藏</span></div>`;
+                return;
+            }
+            
+            list.innerHTML = favorites.map(id => {
+                const s = specimens[id];
+                if (!s) return '';
+                return `
+                    <div class="fav-item">
+                        <img src="${s.image ? s.image.replace('images/', 'images/thumb/') : ''}" class="fav-img" alt="${s.name}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 width=%2240%22 height=%2240%22 fill=%22none%22 stroke=%22%2300e5ff%22 stroke-width=%221.2%22><circle cx=%2212%22 cy=%2212%22 r=%2210%22></circle></svg>'">
+                        <div class="fav-info">
+                            <div class="fav-name" onclick="openSpecimenModal(${id})">${s.name}</div>
+                            <div class="fav-category">${categoryNames[s.category] || '未分类'}</div>
+                        </div>
+                        <button class="fav-remove-btn" onclick="toggleFavorite(${id})" title="移出标本册">✕</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== 标本对比核心功能 =====
+        function toggleCompare(id) {
+            const idx = compareList.indexOf(id);
+            if (idx > -1) {
+                compareList.splice(idx, 1);
+            } else {
+                if (compareList.length >= 2) {
+                    alert('您最多只能同时选择 2 个标本进行对比！');
+                    return;
+                }
+                compareList.push(id);
+            }
+            
+            const btn = document.querySelector(`.specimen-card[data-index="${id}"] .comp-btn`);
+            if (btn) {
+                btn.classList.toggle('active', isInCompare(id));
+            }
+            
+            updateCompareTray();
+        }
+
+        function updateCompareTray() {
+            const tray = document.getElementById('compareTray');
+            const slots = document.getElementById('compareSlots');
+            const count = document.getElementById('compareCount');
+            const startBtn = document.getElementById('compareStartBtn');
+            
+            count.textContent = compareList.length;
+            
+            if (compareList.length > 0) {
+                tray.classList.add('active');
+            } else {
+                tray.classList.remove('active');
+            }
+            
+            slots.innerHTML = [0, 1].map(i => {
+                const id = compareList[i];
+                if (id !== undefined && specimens[id]) {
+                    const s = specimens[id];
+                    return `
+                        <div class="compare-slot">
+                            <img src="${s.image ? s.image.replace('images/', 'images/thumb/') : ''}" alt="${s.name}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 width=%2220%22 height=%2220%22 fill=%22none%22 stroke=%22%2300e5ff%22 stroke-width=%221%22><circle cx=%2212%22 cy=%2212%22 r=%2210%22></circle></svg>'">
+                            <span>${s.name}</span>
+                            <button class="compare-slot-remove" onclick="toggleCompare(${id})">✕</button>
+                        </div>
+                    `;
+                } else {
+                    return `<div class="compare-slot compare-slot-empty">待选择标本${i === 0 ? '一' : '二'}</div>`;
+                }
+            }).join('');
+            
+            startBtn.disabled = compareList.length !== 2;
+        }
+
+        function clearCompare() {
+            const prevList = [...compareList];
+            compareList = [];
+            prevList.forEach(id => {
+                const btn = document.querySelector(`.specimen-card[data-index="${id}"] .comp-btn`);
+                if (btn) btn.classList.remove('active');
+            });
+            updateCompareTray();
+        }
+
+        function openCompareModal() {
+            if (compareList.length !== 2) return;
+            const s1 = specimens[compareList[0]];
+            const s2 = specimens[compareList[1]];
+            
+            const header = document.getElementById('compareTableHeader');
+            header.innerHTML = `
+                <th class="compare-label">对比特征</th>
+                <th>${s1.name}</th>
+                <th>${s2.name}</th>
+            `;
+            
+            const body = document.getElementById('compareTableBody');
+            
+            const items = [
+                { label: '标本影像', val1: `<img src="${s1.image ? s1.image.replace('images/', 'images/medium/') : ''}" loading="lazy" onerror="this.style.display='none'">`, val2: `<img src="${s2.image ? s2.image.replace('images/', 'images/medium/') : ''}" loading="lazy" onerror="this.style.display='none'">` },
+                { label: '拉丁学名', val1: `<span style="font-style:italic;color:var(--ocean-teal);">${s1.latin}</span>`, val2: `<span style="font-style:italic;color:var(--ocean-teal);">${s2.latin}</span>` },
+                { label: '门类划分', val1: categoryNames[s1.category] || '未分类', val2: categoryNames[s2.category] || '未分类' },
+                { label: '分布海域', val1: s1.region || '未知', val2: s2.region || '未知' },
+                { label: '栖息深度', val1: s1.depth || '未知', val2: s2.depth || '未知' },
+                { label: '体型大小', val1: s1.size || '未知', val2: s2.size || '未知' },
+                { label: '保护级别', val1: `<span class="status-tag ${getStatusClass(s1.status)}">${s1.status}</span>`, val2: `<span class="status-tag ${getStatusClass(s2.status)}">${s2.status}</span>` },
+                { label: '生态习性描述', val1: s1.desc || '暂无描述', val2: s2.desc || '暂无描述' }
+            ];
+            
+            body.innerHTML = items.map(item => `
+                <tr>
+                    <td class="compare-label">${item.label}</td>
+                    <td>${item.val1}</td>
+                    <td>${item.val2}</td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('compareModalOverlay').classList.add('active');
+        }
+
+        function closeCompareModal() {
+            document.getElementById('compareModalOverlay').classList.remove('active');
+        }
+
+        // ===== 深海垂直生态带渲染 =====
+        const zoneSpecimens = {
+            epipelagic: specimens.filter(s => s.zones.includes('epipelagic')),
+            mesopelagic: specimens.filter(s => s.zones.includes('mesopelagic')),
+            bathypelagic: specimens.filter(s => s.zones.includes('bathypelagic'))
+        };
+
+        function renderEcologyZone(zone = 'epipelagic') {
+            const list = document.getElementById('depthSpecimenGrid');
+            const items = zoneSpecimens[zone];
+            
+            list.innerHTML = items.map(s => {
+                const id = specimens.indexOf(s);
+                return `
+                    <div class="eco-specimen-card" onclick="openSpecimenModal(${id})">
+                        <div class="eco-img-wrapper">
+                            <img src="${s.image ? s.image.replace('images/', 'images/thumb/') : ''}" alt="${s.name}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 width=%2240%22 height=%2240%22 fill=%22none%22 stroke=%22%2300e5ff%22 stroke-width=%221.2%22><circle cx=%2212%22 cy=%2212%22 r=%2210%22></circle></svg>'">
+                        </div>
+                        <div class="eco-info">
+                            <h4>${s.name}</h4>
+                            <div class="eco-depth-tag">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:2px;">
+                                    <path d="M12 5v14M19 12l-7 7-7-7"></path>
+                                </svg>
+                                ${s.depth}
+                            </div>
+                        </div>
+                        <svg class="eco-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== 标本分类过滤联动 =====
+        document.getElementById('filterBar').addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-btn')) {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                activeCategory = e.target.dataset.filter;
+                renderSpecimens();
+            }
+        });
+
+        // ===== 标本详情大弹窗 (集成 TTS 语音讲解功能) =====
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalClose = document.getElementById('modalClose');
+        const modalImageContainer = document.getElementById('modalImageContainer');
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function openSpecimenModal(index) {
+            const s = specimens[index];
+            if (!s) return;
+
+            stopVoiceGuide();
+
+            document.getElementById('modalTitle').textContent = s.name;
+            document.getElementById('modalLatin').textContent = s.latin || '';
+            document.getElementById('modalDesc').textContent = s.desc || '暂无描述';
+
+            // 填充图片 (弹窗用 medium 质量图)
+            const mediumImg = (path) => path ? path.replace('images/', 'images/medium/') : path;
+            if (s.image2) {
+                modalImageContainer.className = 'modal-image dual';
+                modalImageContainer.innerHTML = `<img src="${mediumImg(s.image)}" alt="${s.name}" onerror="this.style.display='none'"><img src="${mediumImg(s.image2)}" alt="${s.name}" onerror="this.style.display='none'">`;
+            } else if (s.image) {
+                modalImageContainer.className = 'modal-image';
+                modalImageContainer.innerHTML = `<img src="${mediumImg(s.image)}" alt="${s.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><svg class="placeholder-icon" style="display:none;color:var(--ocean-cyan);opacity:0.4;filter:drop-shadow(0 0 15px rgba(0,229,255,0.25));" viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v20M2 12h20"></path></svg>`;
+            } else {
+                modalImageContainer.className = 'modal-image';
+                modalImageContainer.innerHTML = `
+                    <svg class="placeholder-icon" viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 2v20M2 12h20"></path>
+                    </svg>
+                `;
+            }
+
+            const infoGrid = document.getElementById('modalInfoGrid');
+            infoGrid.innerHTML = `
+                <div class="modal-info-item">
+                    <div class="label">分类</div>
+                    <div class="value">${categoryNames[s.category] || '未分类'}</div>
+                </div>
+                <div class="modal-info-item">
+                    <div class="label">分布海域</div>
+                    <div class="value">${s.region || '未知'}</div>
+                </div>
+                <div class="modal-info-item">
+                    <div class="label">栖息深度</div>
+                    <div class="value">${s.depth || '未知'}</div>
+                </div>
+                <div class="modal-info-item">
+                    <div class="label">体型大小</div>
+                    <div class="value">${s.size || '未知'}</div>
+                </div>
+                <div class="modal-info-item">
+                    <div class="label">保护等级</div>
+                    <div class="value">${s.status || '未评估'}</div>
+                </div>
+            `;
+
+            modalOverlay.classList.add('active');
+        }
+
+        function toggleVoiceGuide() {
+            const btn = document.getElementById('voiceGuideBtn');
+            const descText = document.getElementById('modalDesc').textContent;
+            const specName = document.getElementById('modalTitle').textContent;
+            
+            if (isSpeaking) {
+                stopVoiceGuide();
+            } else {
+                window.speechSynthesis.cancel();
+                
+                const textToSpeak = `${specName}。${descText}`;
+                currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
+                currentUtterance.lang = 'zh-CN';
+                currentUtterance.rate = 1.0;
+                
+                currentUtterance.onend = () => {
+                    isSpeaking = false;
+                    btn.classList.remove('playing');
+                    btn.querySelector('span').textContent = '语音导览';
+                };
+                
+                currentUtterance.onerror = () => {
+                    isSpeaking = false;
+                    btn.classList.remove('playing');
+                    btn.querySelector('span').textContent = '语音导览';
+                };
+                
+                window.speechSynthesis.speak(currentUtterance);
+                isSpeaking = true;
+                btn.classList.add('playing');
+                btn.querySelector('span').textContent = '停止播放';
+            }
+        }
+
+        function stopVoiceGuide() {
+            window.speechSynthesis.cancel();
+            isSpeaking = false;
+            const btn = document.getElementById('voiceGuideBtn');
+            if (btn) {
+                btn.classList.remove('playing');
+                btn.querySelector('span').textContent = '语音导览';
+            }
+        }
+
+        // 统一网格点击委托
+        document.getElementById('specimenGrid').addEventListener('click', (e) => {
+            const card = e.target.closest('.specimen-card');
+            if (!card) return;
+            if (e.target.closest('.card-action-btn')) return;
+            const index = parseInt(card.dataset.index);
+            openSpecimenModal(index);
+        });
+
+        modalClose.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+            stopVoiceGuide();
+        });
+
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.remove('active');
+                stopVoiceGuide();
+            }
+        });
+
+        // ===== 导航栏滚动效果 =====
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 40) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // ===== 初始渲染 =====
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSpecimens();
+            renderEcologyZone('epipelagic');
+            updateFavUI();
+            
+            // 绑定垂直生态带按钮事件
+            document.querySelectorAll('.depth-zone-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.depth-zone-item').forEach(z => z.classList.remove('active'));
+                    item.classList.add('active');
+                    renderEcologyZone(item.dataset.zone);
+                });
+            });
+
+            animateNumberOnLoad('statCategories', 3);
+        });
+    </script>
+</body>
+</html>
