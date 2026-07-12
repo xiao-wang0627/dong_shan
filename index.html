@@ -519,32 +519,6 @@
             overflow: hidden;
         }
 
-        /* 展馆简介 - 海面光透射装饰 */
-        .intro-banner {
-            position: relative;
-            width: 100%;
-            height: 180px;
-            margin-bottom: 48px;
-            border-radius: 20px;
-            overflow: hidden;
-            background: linear-gradient(180deg, #0a2a4a 0%, #061528 100%);
-        }
-        .intro-banner svg { width: 100%; height: 100%; display: block; }
-        .light-ray {
-            animation: rayShimmer 6s ease-in-out infinite alternate;
-        }
-        .light-ray:nth-child(2) { animation-delay: -1.5s; }
-        .light-ray:nth-child(3) { animation-delay: -3s; }
-        .light-ray:nth-child(4) { animation-delay: -4.5s; }
-        @keyframes rayShimmer {
-            0% { opacity: 0.15; transform: translateX(0) scaleY(1); }
-            100% { opacity: 0.5; transform: translateX(10px) scaleY(1.05); }
-        }
-        .wave-line { animation: waveMove 8s ease-in-out infinite alternate; }
-        @keyframes waveMove {
-            0% { transform: translateX(-20px); }
-            100% { transform: translateX(20px); }
-        }
         .intro-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -2159,7 +2133,6 @@
                 min-width: 100%;
             }
             /* 新增视觉装饰响应式 */
-            .intro-banner { height: 120px; }
             .depth-viz-zone .zone-name { font-size: 11px; }
             .depth-viz-zone .zone-depth { font-size: 9px; }
             .depth-viz-label-item { font-size: 10px; }
@@ -2265,29 +2238,6 @@
             <span class="section-tag">ABOUT</span>
             <h2 class="section-title">展馆<span class="accent">简介</span></h2>
             <p class="section-desc">融合数字科技与海洋科学，打造新型海洋科普生态</p>
-        </div>
-
-        <!-- 海面光透射装饰横幅 -->
-        <div class="intro-banner">
-            <svg viewBox="0 0 1200 180" preserveAspectRatio="xMidYMid slice">
-                <!-- 海面波纹 -->
-                <path class="wave-line" d="M0,30 Q150,15 300,30 T600,30 T900,30 T1200,30 L1200,0 L0,0 Z" fill="rgba(0,229,255,0.06)"/>
-                <path class="wave-line" d="M0,45 Q200,30 400,45 T800,45 T1200,45 L1200,0 L0,0 Z" fill="rgba(0,229,255,0.04)" style="animation-delay:-2s"/>
-                <!-- 光透射射线 -->
-                <polygon class="light-ray" points="200,0 180,180 280,180 300,0" fill="rgba(0,229,255,0.08)"/>
-                <polygon class="light-ray" points="500,0 470,180 590,180 620,0" fill="rgba(0,245,212,0.06)"/>
-                <polygon class="light-ray" points="820,0 790,180 920,180 950,0" fill="rgba(0,229,255,0.07)"/>
-                <polygon class="light-ray" points="1050,0 1020,180 1130,180 1160,0" fill="rgba(0,245,212,0.05)"/>
-                <!-- 粒子气泡 -->
-                <circle cx="150" cy="120" r="3" fill="rgba(0,229,255,0.3)"/>
-                <circle cx="380" cy="90" r="2" fill="rgba(0,245,212,0.4)"/>
-                <circle cx="680" cy="140" r="4" fill="rgba(0,229,255,0.2)"/>
-                <circle cx="900" cy="100" r="2" fill="rgba(0,245,212,0.3)"/>
-                <circle cx="1080" cy="130" r="3" fill="rgba(0,229,255,0.25)"/>
-                <circle cx="550" cy="60" r="2" fill="rgba(0,245,212,0.35)"/>
-                <!-- 海底波纹 -->
-                <path d="M0,170 Q200,155 400,170 T800,170 T1200,170 L1200,180 L0,180 Z" fill="rgba(0,229,255,0.05)"/>
-            </svg>
         </div>
 
         <div class="intro-grid">
